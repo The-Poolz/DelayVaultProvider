@@ -9,5 +9,5 @@ typechain-types
 coverage
 coverage.json
 LockDealNFT*
-DelayVault*
+DelayVault
 VaultManager*
