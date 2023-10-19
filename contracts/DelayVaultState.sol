@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import "../../LockDealNFT/contracts/SimpleProviders/DealProvider/DealProviderState.sol";
-import "../../LockDealNFT/contracts/util/CalcUtils.sol";
+import "./LockDealNFT/contracts/SimpleProviders/DealProvider/DealProviderState.sol";
+import "./LockDealNFT/contracts/util/CalcUtils.sol";
 import "./LastPoolOwnerState.sol";
 import "./HoldersSum.sol";
 
