@@ -1,0 +1,14 @@
+ignore:
+  - */mock/.*
+  - */mocks/.*
+  - */Poolz-Helper-master/.*
+  - */DelayVault-master/.*
+
+coverage:
+  status:
+    patch:
+      default:
+        # basic
+        target: auto
+        threshold: 85%
+        base: auto
