@@ -30,7 +30,7 @@ jobs:
         run: npm i hardhat
 
       - name: File Import
-        run: npx ts-node .\scripts\fileImport.ts
+        run: npx ts-node ./scripts/fileImport.ts
 
       - name: Run gas tests and generate report
         id: gas_test
