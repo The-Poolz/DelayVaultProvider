@@ -34,31 +34,6 @@ describe('DelayVault Migrator', function () {
   let startTime: number, finishTime: number;
   const amount: BigNumber = ethers.BigNumber.from('1000');
   const ONE_DAY = ethers.BigNumber.from(86400);
-  const userVaults: Array<{
-    Amount: BigNumber;
-    StartDelay: BigNumber;
-    CliffDelay: BigNumber;
-    FinishDelay: BigNumber;
-  }> = [
-    {
-      Amount: amount,
-      StartDelay: ONE_DAY,
-      CliffDelay: ethers.BigNumber.from(0),
-      FinishDelay: ethers.BigNumber.from(0),
-    },
-    {
-      Amount: amount.mul(2),
-      StartDelay: ethers.BigNumber.from(0),
-      CliffDelay: ethers.BigNumber.from(0),
-      FinishDelay: ONE_DAY,
-    },
-    {
-      Amount: amount.div(2),
-      StartDelay: ethers.BigNumber.from(0),
-      CliffDelay: ONE_DAY,
-      FinishDelay: ethers.BigNumber.from(0),
-    },
-  ];
 
   before('Download and unzip contracts', async () => {
     [user1, user2, user3] = await ethers.getSigners();
@@ -132,6 +107,19 @@ describe('DelayVault Migrator', function () {
     expect(data.toString()).to.be.equal([0, 0, 0, 0].toString());
   });
 
+  it('should increase VaultManager token balance after full migrate', async () => {
+    const oldBalance = await vaultManager.getAllVaultBalanceByToken(token.address, 0, 1);
+    // create vault in old delay vault
+    await token.connect(user1).approve(delayVault.address, amount);
+    await delayVault.connect(user1).CreateVault(token.address, amount, 864000, 0, 0);
+    // approve redemption
+    await delayVault.connect(user1).approveTokenRedemption(token.address, true);
+    // migrate token
+    await delayVaultMigrator.connect(user1).fullMigrate();
+    const newBalance = await vaultManager.getAllVaultBalanceByToken(token.address, 0, 1);
+    expect(oldBalance.add(amount)).to.be.equal(newBalance);
+  });
+
   it('should CreateNew NFT Pool after old delay vault withdraw', async () => {
     // create vault in old delay vault
     await token.connect(user2).approve(delayVault.address, amount);
@@ -139,5 +127,40 @@ describe('DelayVault Migrator', function () {
     // withdraw from old delay vault
     await delayVault.connect(user2).Withdraw(token.address);
     expect(await lockDealNFT['balanceOf(address)'](user2.address)).to.be.equal(1);
+  });
+
+  it('should increase VaultManager token balance after old delay vault withdraw', async () => {
+    const oldBalance = await vaultManager.getAllVaultBalanceByToken(token.address, 0, 1);
+    await token.connect(user2).approve(delayVault.address, amount);
+    await delayVault.connect(user2).CreateVault(token.address, amount, 864000, 0, 0);
+    await delayVault.connect(user2).Withdraw(token.address);
+    const newBalance = await vaultManager.getAllVaultBalanceByToken(token.address, 0, 1);
+    expect(oldBalance.add(amount)).to.be.equal(newBalance);
+  });
+
+  it('should withdraw from old delay after reedeem', async () => {
+    // create vault in old delay vault
+    await token.connect(user3).approve(delayVault.address, amount);
+    await delayVault.connect(user3).CreateVault(token.address, amount, 864000, 0, 0);
+    // approve redemption
+    await delayVault.connect(user3).approveTokenRedemption(token.address, true);
+    // withdrawTokensFromV1Vault after redeem call
+    await delayVaultMigrator.connect(user3).withdrawTokensFromV1Vault();
+    const data = await delayVault.VaultMap(token.address, user3.address);
+    expect(data.toString()).to.be.equal([0, 0, 0, 0].toString());
+    expect(await lockDealNFT['balanceOf(address)'](user3.address)).to.be.equal(1);
+  });
+
+  it('should increase VaultManager token balance after withdrawTokensFromV1Vault call', async () => {
+    const oldBalance = await vaultManager.getAllVaultBalanceByToken(token.address, 0, 1);
+    // create vault in old delay vault
+    await token.connect(user3).approve(delayVault.address, amount);
+    await delayVault.connect(user3).CreateVault(token.address, amount, 864000, 0, 0);
+    // approve redemption
+    await delayVault.connect(user3).approveTokenRedemption(token.address, true);
+    // withdrawTokensFromV1Vault after redeem call
+    await delayVaultMigrator.connect(user3).withdrawTokensFromV1Vault();
+    const newBalance = await vaultManager.getAllVaultBalanceByToken(token.address, 0, 1);
+    expect(oldBalance.add(amount)).to.be.equal(newBalance);
   });
 });
