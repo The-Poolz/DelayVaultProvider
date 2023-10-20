@@ -2,6 +2,7 @@
 pragma solidity ^0.8.0;
 
 import "./DelayVaultState.sol";
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 contract DelayVaultProvider is DelayVaultState {
     constructor(address _token, IMigrator _migrator, ProviderData[] memory _providersData) {
@@ -54,7 +55,8 @@ contract DelayVaultProvider is DelayVaultState {
         require(owner != address(0), "invalid owner address");
         uint256 amount = params[0];
         require(amount > 0, "amount must be bigger than 0");
-        poolId = lockDealNFT.mintAndTransfer(owner, token, msg.sender, amount, this);
+        IERC20(token).transferFrom(msg.sender, address(lockDealNFT), amount);
+        poolId = lockDealNFT.mintAndTransfer(owner, token, amount, this);
         _registerPool(poolId, params);
     }
 }

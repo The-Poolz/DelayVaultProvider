@@ -10,7 +10,6 @@ abstract contract DelayMigratorState is IMigrator {
     IDelayVaultV1 public oldVault;
     IDelayVaultProvider public newVault;
     ILockDealNFT public lockDealNFT;
-    IVaultManager public vaultManager;
     address public token;
     address public owner = msg.sender; // Initialize owner at declaration
 

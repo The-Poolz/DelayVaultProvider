@@ -4,7 +4,7 @@ pragma solidity ^0.8.0;
 import "../LockDealNFT/contracts/interfaces/IProvider.sol";
 import "../LockDealNFT/contracts/interfaces/ILockDealNFT.sol";
 
-interface IDelayVaultProvider {
+interface IDelayVaultProvider is IProvider {
     struct ProviderData {
         IProvider provider;
         uint256[] params; // 0 for DealProvider,1 for LockProvider ,2 for TimedDealProvider

@@ -5,8 +5,9 @@ import "./DelayMigratorState.sol";
 import "../interfaces/ILockDealV2.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/utils/introspection/ERC165Checker.sol";
+import "hardhat/console.sol";
 
-contract DelayVaultMigrator is DelayMigratorState,  ILockDealV2 {
+contract DelayVaultMigrator is DelayMigratorState, ILockDealV2 {
     constructor(ILockDealNFT _nft, IDelayVaultV1 _oldVault) {
         require(address(_oldVault) != address(0), "DelayVaultMigrator: Invalid old delay vault contract");
         require(address(_nft) != address(0), "DelayVaultMigrator: Invalid lock deal nft contract");
@@ -23,7 +24,6 @@ contract DelayVaultMigrator is DelayMigratorState,  ILockDealV2 {
         );
         newVault = _newVault;
         token = newVault.token();
-        vaultManager = lockDealNFT.vaultManager();
         owner = address(0); // Set owner to zero address
     }
 
@@ -34,7 +34,7 @@ contract DelayVaultMigrator is DelayMigratorState,  ILockDealV2 {
         oldVault.redeemTokensFromVault(token, msg.sender, amount);
         uint256[] memory params = new uint256[](1);
         params[0] = amount;
-        IERC20(token).approve(address(vaultManager), amount);
+        IERC20(token).approve(address(newVault), amount);
         newVault.createNewDelayVault(msg.sender, params);
     }
 
@@ -45,14 +45,8 @@ contract DelayVaultMigrator is DelayMigratorState,  ILockDealV2 {
         oldVault.redeemTokensFromVault(token, msg.sender, amount);
         uint8 theType = newVault.theTypeOf(newVault.getTotalAmount(msg.sender));
         IDelayVaultProvider.ProviderData memory providerData = newVault.getTypeToProviderData(theType);
-        IERC20(token).approve(address(vaultManager), amount);
-        uint256 newPoolId = lockDealNFT.mintAndTransfer(
-            msg.sender,
-            token,
-            address(this),
-            amount,
-            providerData.provider
-        );
+        IERC20(token).approve(address(lockDealNFT), amount);
+        uint256 newPoolId = lockDealNFT.mintAndTransfer(msg.sender, token, amount, providerData.provider);
         uint256[] memory params = newVault.getWithdrawPoolParams(amount, theType);
         providerData.provider.registerPool(newPoolId, params);
     }
@@ -73,14 +67,8 @@ contract DelayVaultMigrator is DelayMigratorState,  ILockDealV2 {
         uint8 theType = newVault.theTypeOf(newVault.getTotalAmount(_Owner));
         IDelayVaultProvider.ProviderData memory providerData = newVault.getTypeToProviderData(theType);
         IERC20(token).transferFrom(msg.sender, address(this), _StartAmount);
-        IERC20(token).approve(address(vaultManager), _StartAmount);
-        uint256 newPoolId = lockDealNFT.mintAndTransfer(
-            _Owner,
-            _Token,
-            address(this),
-            _StartAmount,
-            providerData.provider
-        );
+        IERC20(token).transfer(address(lockDealNFT), _StartAmount);
+        uint256 newPoolId = lockDealNFT.mintAndTransfer(_Owner, _Token, _StartAmount, providerData.provider);
         uint256[] memory params = newVault.getWithdrawPoolParams(_StartAmount, theType);
         providerData.provider.registerPool(newPoolId, params);
     }

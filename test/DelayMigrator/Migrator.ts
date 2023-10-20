@@ -91,6 +91,8 @@ describe('DelayVault Migrator', function () {
     await lockDealNFT.setApprovedContract(delayVaultProvider.address, true);
     await lockDealNFT.setApprovedContract(delayVaultMigrator.address, true);
     await token.transfer(user1.address, amount.mul(10));
+    await token.transfer(user2.address, amount.mul(10));
+    await token.transfer(user3.address, amount.mul(10));
   });
 
   beforeEach(async () => {});
@@ -115,7 +117,6 @@ describe('DelayVault Migrator', function () {
     await delayVaultMigrator.finilize(delayVaultProvider.address);
     expect(await delayVaultMigrator.newVault()).to.be.equal(delayVaultProvider.address);
     expect(await delayVaultMigrator.token()).to.be.equal(token.address);
-    expect(await delayVaultMigrator.vaultManager()).to.be.equal(vaultManager.address);
     expect(await delayVaultMigrator.owner()).to.be.equal(constants.AddressZero);
   });
 
@@ -133,10 +134,10 @@ describe('DelayVault Migrator', function () {
 
   it('should CreateNew NFT Pool after old delay vault withdraw', async () => {
     // create vault in old delay vault
-    await token.connect(user1).approve(delayVault.address, amount);
-    await delayVault.connect(user1).CreateVault(token.address, amount, 864000, 0, 0);
+    await token.connect(user2).approve(delayVault.address, amount);
+    await delayVault.connect(user2).CreateVault(token.address, amount, 864000, 0, 0);
     // withdraw from old delay vault
-    await delayVault.connect(user1).Withdraw(token.address);
-    expect(await lockDealNFT['balanceOf(address)'](user1.address)).to.be.equal(1);
+    await delayVault.connect(user2).Withdraw(token.address);
+    expect(await lockDealNFT['balanceOf(address)'](user2.address)).to.be.equal(1);
   });
 });

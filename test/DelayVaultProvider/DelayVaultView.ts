@@ -13,6 +13,7 @@ describe('DelayVaultProvider view tests', async () => {
   it('should return getWithdrawableAmount from created pool', async () => {
     const params = [delayVault.tier2];
     const owner = delayVault.newOwner;
+    await delayVault.token.connect(owner).approve(delayVault.delayVaultProvider.address, delayVault.tier2);
     await delayVault.delayVaultProvider.connect(owner).createNewDelayVault(owner.address, params);
     expect(await delayVault.delayVaultProvider.getWithdrawableAmount(delayVault.poolId)).to.be.equal(delayVault.tier2);
   });
@@ -26,6 +27,7 @@ describe('DelayVaultProvider view tests', async () => {
   it('should return total user amount', async () => {
     const params = [delayVault.tier2];
     const owner = delayVault.user1;
+    await delayVault.token.connect(owner).approve(delayVault.delayVaultProvider.address, delayVault.tier3);
     await delayVault.delayVaultProvider.connect(owner).createNewDelayVault(owner.address, params);
     await delayVault.delayVaultProvider.connect(owner).createNewDelayVault(owner.address, params);
     expect(await delayVault.delayVaultProvider.getTotalAmount(owner.address)).to.be.equal(delayVault.tier2.mul(2));

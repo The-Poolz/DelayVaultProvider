@@ -1,5 +1,4 @@
 import { lockDealNft } from '../../typechain-types/contracts';
-import { token } from '../helper';
 import { delayVault } from './setupTests';
 import { expect } from 'chai';
 import { ethers } from 'hardhat';
@@ -18,7 +17,7 @@ describe('DelayVault Provider', function () {
   });
 
   it("should check provider's token", async () => {
-    expect(await delayVault.delayVaultProvider.token()).to.equal(token);
+    expect(await delayVault.delayVaultProvider.token()).to.equal(delayVault.token.address);
   });
 
   it("should check provider's lockDealNFT", async () => {
@@ -39,12 +38,18 @@ describe('DelayVault Provider', function () {
   it('should return new provider poolId', async () => {
     const params = [delayVault.tier1];
     const lastPoolId = (await delayVault.lockDealNFT.totalSupply()).sub(1);
-    await delayVault.delayVaultProvider.createNewDelayVault(delayVault.receiver.address, params);
+    await delayVault.token
+      .connect(delayVault.receiver)
+      .approve(delayVault.delayVaultProvider.address, delayVault.tier1);
+    await delayVault.delayVaultProvider
+      .connect(delayVault.receiver)
+      .createNewDelayVault(delayVault.receiver.address, params);
     expect((await delayVault.lockDealNFT.totalSupply()).sub(1)).to.equal(lastPoolId.add(1));
   });
 
   it('should check vault data with tier 1', async () => {
     const params = [delayVault.tier1];
+    await delayVault.token.connect(delayVault.user2).approve(delayVault.delayVaultProvider.address, delayVault.tier1);
     await delayVault.delayVaultProvider.connect(delayVault.user2).createNewDelayVault(delayVault.user1.address, params);
     const newAmount = await delayVault.delayVaultProvider.userToAmount(delayVault.user1.address);
     const type = await delayVault.delayVaultProvider.userToType(delayVault.user1.address);
@@ -57,6 +62,7 @@ describe('DelayVault Provider', function () {
 
   it('should check delayVault data with tier 2', async () => {
     const params = [delayVault.tier2];
+    await delayVault.token.connect(delayVault.user2).approve(delayVault.delayVaultProvider.address, delayVault.tier2);
     await delayVault.delayVaultProvider.connect(delayVault.user2).createNewDelayVault(delayVault.user2.address, params);
     const newAmount = await delayVault.delayVaultProvider.userToAmount(delayVault.user2.address);
     const type = await delayVault.delayVaultProvider.userToType(delayVault.user2.address);
@@ -66,6 +72,9 @@ describe('DelayVault Provider', function () {
 
   it('should check delayVault data with tier 3', async () => {
     const params = [delayVault.tier3];
+    await delayVault.token
+      .connect(delayVault.newOwner)
+      .approve(delayVault.delayVaultProvider.address, delayVault.tier3);
     await delayVault.delayVaultProvider
       .connect(delayVault.newOwner)
       .createNewDelayVault(delayVault.newOwner.address, params);
@@ -80,6 +89,7 @@ describe('DelayVault Provider', function () {
     const params = [delayVault.tier2];
     const owner = delayVault.newOwner;
     await delayVault.lockDealNFT.connect(owner).approvePoolTransfers(true);
+    await delayVault.token.connect(owner).approve(delayVault.delayVaultProvider.address, delayVault.tier2);
     await delayVault.delayVaultProvider.connect(owner).createNewDelayVault(owner.address, params);
     await expect(
       delayVault.lockDealNFT

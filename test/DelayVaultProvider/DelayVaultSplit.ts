@@ -15,6 +15,7 @@ describe('delayVault split', async () => {
   });
 
   async function split(creator: SignerWithAddress, userToSplit: SignerWithAddress, params: BigNumber[]) {
+    await delayVault.token.connect(creator).approve(delayVault.delayVaultProvider.address, params[0]);
     await delayVault.delayVaultProvider.connect(creator).createNewDelayVault(creator.address, params);
     const bytes = ethers.utils.defaultAbiCoder.encode(['uint256', 'address'], [delayVault.ratio, creator.address]);
     await delayVault.lockDealNFT
@@ -62,6 +63,7 @@ describe('delayVault split', async () => {
   it('the level should not decrease after split', async () => {
     const params = [delayVault.tier2];
     const owner = delayVault.newOwner;
+    await delayVault.token.connect(owner).approve(delayVault.delayVaultProvider.address, delayVault.tier2);
     await delayVault.delayVaultProvider.connect(owner).createNewDelayVault(owner.address, params);
     expect(await delayVault.delayVaultProvider.userToType(owner.address)).to.equal(1);
     const rate = MAX_RATIO.sub(MAX_RATIO.div(10)); // 90%
@@ -83,6 +85,7 @@ describe('delayVault split', async () => {
     expect(await delayVault.delayVaultProvider.userToType(delayVault.receiver.address)).to.equal(0);
     const params = [delayVault.tier2];
     const owner = delayVault.newOwner;
+    await delayVault.token.connect(owner).approve(delayVault.delayVaultProvider.address, delayVault.tier2);
     await delayVault.delayVaultProvider.connect(owner).createNewDelayVault(owner.address, params);
     const bytes = ethers.utils.defaultAbiCoder.encode(['uint256', 'address'], [MAX_RATIO, delayVault.receiver.address]);
     await expect(
