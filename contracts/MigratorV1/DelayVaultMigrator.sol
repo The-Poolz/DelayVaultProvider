@@ -45,7 +45,7 @@ contract DelayVaultMigrator is DelayMigratorState, ILockDealV2 {
         oldVault.redeemTokensFromVault(token, msg.sender, amount);
         uint8 theType = newVault.theTypeOf(newVault.getTotalAmount(msg.sender));
         IDelayVaultProvider.ProviderData memory providerData = newVault.getTypeToProviderData(theType);
-        IERC20(token).approve(address(lockDealNFT), amount);
+        IERC20(token).transfer(address(lockDealNFT), amount);
         uint256 newPoolId = lockDealNFT.mintAndTransfer(msg.sender, token, amount, providerData.provider);
         uint256[] memory params = newVault.getWithdrawPoolParams(amount, theType);
         providerData.provider.registerPool(newPoolId, params);
