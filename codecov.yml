@@ -1,9 +1,3 @@
-ignore:
-  - */mock/.*
-  - */mocks/.*
-  - */Poolz-Helper-master/.*
-  - */DelayVault-master/.*
-
 coverage:
   status:
     patch:
