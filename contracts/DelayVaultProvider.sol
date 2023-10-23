@@ -52,11 +52,19 @@ contract DelayVaultProvider is DelayVaultState {
 
     function createNewDelayVault(address owner, uint256[] calldata params) external returns (uint256 poolId) {
         require(params.length == currentParamsTargetLenght(), "invalid params length");
-        require(owner != address(0), "invalid owner address");
         uint256 amount = params[0];
-        require(amount > 0, "amount must be bigger than 0");
         IERC20(token).transferFrom(msg.sender, address(lockDealNFT), amount);
         poolId = lockDealNFT.mintAndTransfer(owner, token, amount, this);
+        _registerPool(poolId, params);
+    }
+
+    function createNewDelayVaultWithSignature(
+        address owner,
+        uint256[] calldata params,
+        bytes calldata signature
+    ) external returns (uint256 poolId) {
+        require(params.length == currentParamsTargetLenght(), "invalid params length");
+        poolId = lockDealNFT.safeMintAndTransfer(owner, token, msg.sender, params[0], this, signature);
         _registerPool(poolId, params);
     }
 }
