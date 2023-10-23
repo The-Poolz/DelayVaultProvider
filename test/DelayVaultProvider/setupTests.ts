@@ -11,10 +11,11 @@ import { ERC20Token } from '../../typechain-types';
 import { IDelayVaultProvider } from '../../typechain-types/contracts/interfaces/IDelayVaultProvider';
 import { deployed, MAX_RATIO, _createUsers, gasLimit } from '../helper';
 import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers';
-import { BigNumber } from 'ethers';
+import { BigNumber, Bytes } from 'ethers';
 import { ethers } from 'hardhat';
 
 export class DelaySetup {
+  public signature: Bytes = ethers.utils.toUtf8Bytes('signature');
   public delayVaultProvider!: DelayVaultProvider;
   public lockDealNFT!: LockDealNFT;
   public timedDealProvider!: TimedDealProvider;

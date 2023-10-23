@@ -47,6 +47,22 @@ describe('DelayVault Provider', function () {
     expect((await delayVault.lockDealNFT.totalSupply()).sub(1)).to.equal(lastPoolId.add(1));
   });
 
+  it('should create new delay vault with signature', async () => {
+    const currentNonce = await delayVault.vaultManager.nonces(delayVault.user4.address);
+    const dataToCheck = ethers.utils.solidityPack(['address', 'uint256'], [delayVault.token.address, delayVault.tier1]);
+    const hash = ethers.utils.solidityKeccak256(['bytes', 'uint'], [dataToCheck, currentNonce]);
+    const signature = await delayVault.user4.signMessage(ethers.utils.arrayify(hash));
+    const params = [delayVault.tier1];
+    await delayVault.token.connect(delayVault.user4).approve(delayVault.vaultManager.address, delayVault.tier1);
+    await delayVault.delayVaultProvider
+      .connect(delayVault.user4)
+      .createNewDelayVaultWithSignature(delayVault.user4.address, params, signature);
+    const newAmount = await delayVault.delayVaultProvider.userToAmount(delayVault.user4.address);
+    const type = await delayVault.delayVaultProvider.userToType(delayVault.user4.address);
+    expect(newAmount).to.equal(delayVault.tier1);
+    expect(type).to.equal(0);
+  });
+
   it('should check vault data with tier 1', async () => {
     const params = [delayVault.tier1];
     await delayVault.token.connect(delayVault.user2).approve(delayVault.delayVaultProvider.address, delayVault.tier1);
