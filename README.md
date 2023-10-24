@@ -2,7 +2,7 @@
 
 [![Build and Test](https://github.com/The-Poolz/DelayVaultProvider/actions/workflows/node.js.yml/badge.svg)](https://github.com/The-Poolz/DelayVaultProvider/actions/workflows/node.js.yml)
 [![codecov](https://codecov.io/gh/The-Poolz/DelayVaultProvider/branch/master/graph/badge.svg)](https://codecov.io/gh/The-Poolz/DelayVaultProvider)
-[![CodeFactor](https://www.codefactor.io/repository/github/the-poolz/delayvaultprovider/badge)](https://www.codefactor.io/repository/github/the-poolz/delayvaultprovider)
+[![CodeFactor](https://www.codefactor.io/repository/github/the-poolz/LockDealNFT.DelayVaultProvider/badge)](https://www.codefactor.io/repository/github/the-poolz/LockDealNFT.DelayVaultProvider)
 
 A smart contract that locks **ERC20** tokens with a set delay. Upon withdrawal request, the tokens remain locked for the specified delay duration. Every lock is paired with an **NFT**, representing ownership of the locked amount.
 
@@ -42,7 +42,7 @@ npx hardhat coverage
 
 ## UML
 `DelayVaultProvider` is linked with [LockDealNFT](https://github.com/The-Poolz/LockDealNFT) for working with **NFTs** and with [VaultManager](https://github.com/The-Poolz/VaultManager) for storing **ERC20** tokens.
-![classDiagram](https://github.com/The-Poolz/DelayVaultProvider/assets/68740472/6581e0d0-da10-4ffa-828a-d3b328478a30)
+![classDiagram](https://github.com/The-Poolz/LockDealNFT.DelayVaultProvider/assets/68740472/f5faceb8-276b-4bb8-a7f3-a5b828b78694)
 
 ## Functionality
 
