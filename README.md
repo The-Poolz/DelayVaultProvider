@@ -42,7 +42,7 @@ npx hardhat coverage
 
 ## UML
 `DelayVaultProvider` is linked with [LockDealNFT](https://github.com/The-Poolz/LockDealNFT) for working with **NFTs** and with [VaultManager](https://github.com/The-Poolz/VaultManager) for storing **ERC20** tokens.
-![classDiagram](https://github.com/The-Poolz/DelayVaultProvider/assets/68740472/b9eb02b7-7c85-410b-a6ea-0adfb8ad7ec9)
+![classDiagram](https://github.com/The-Poolz/DelayVaultProvider/assets/68740472/6581e0d0-da10-4ffa-828a-d3b328478a30)
 
 ## Functionality
 
