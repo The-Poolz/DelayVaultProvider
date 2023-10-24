@@ -63,23 +63,23 @@ function registerPool(uint256 poolId, uint256[] calldata params) public
 ```
  Providers can register a new pool with this function, associating a poolId and providing parameters for the pool.
 
-* `uint256 poolId` - `DelayVaultProvider` NFT pool indentifier.
+* `uint256 poolId` - **DelayVaultProvider** NFT pool indentifier.
 * `uint256[] calldata params` - an array of parameters. Contains the amount of tokens stored in a specific pool.
 
 ### getParams
 ```solidity
 function getParams(uint256 poolId) external view override returns (uint256[] memory params)
 ```
- Allows users to retrieve parameters associated with a registered pool.
-Parameters: poolId (pool identifier).
-Returns: An array of parameters.
+ Allows users to retrieve parameters associated with a **DelayVaultProvider** pool.
+* `uint256 poolId` - pool identifier.
+* `returns` - An array of parameters.
 ### getWithdrawableAmount
 ```solidity
 function getWithdrawableAmount(uint256 poolId) external view override returns (uint256 withdrawalAmount)
 ```
  Returns the withdrawable amount for a specified pool.
-Parameters: poolId (pool identifier).
-Returns: The withdrawal amount.
+* `uint256 poolId` - pool identifier.
+* `returns` - the withdrawal amount.
 ### upgradeType
 ```solidity
 function upgradeType(uint8 newType) public
@@ -93,7 +93,7 @@ function createNewDelayVault(address owner, uint256[] calldata params) external 
  Users can create a new delay vault by providing an owner address and parameters for the vault. Tokens are passed from the caller to the `LockDealNFT` contract and then to the `VaultManager` and a new vault is created.
 * `address owner` - the owner of the new vault.
 *  `uint256[] calldata params` - an array of parameters. Contains the amount of tokens stored in a specific pool.
-* `returns`: The created pool ID.
+* `returns` - The created pool ID.
 ### createNewDelayVaultWithSignature
 ```solidity
 function createNewDelayVaultWithSignature(
@@ -106,7 +106,7 @@ function createNewDelayVaultWithSignature(
 * `address owner` - the owner of the new vault.
 * `uint256[] calldata params` - an array of parameters. Contains the amount of tokens stored in a specific pool.
 * `bytes calldata signature` - a cryptographic signature.
-* `returns`: The created pool ID.
+* `returns` -  The created pool ID.
 
 ## License
 [The-Poolz](https://poolz.finance/) Contracts is released under the [MIT License](https://github.com/The-Poolz/DelayVaultProvider/blob/master/LICENSE).
