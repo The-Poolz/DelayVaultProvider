@@ -109,8 +109,7 @@ describe('DelayVault Provider', function () {
     await delayVault.delayVaultProvider.connect(owner).createNewDelayVault(owner.address, params);
     await expect(
       delayVault.lockDealNFT
-        .connect(owner)
-        ['safeTransferFrom(address,address,uint256)'](owner.address, delayVault.user4.address, delayVault.poolId),
+        .connect(owner)['safeTransferFrom(address,address,uint256)'](owner.address, delayVault.user4.address, delayVault.poolId),
     ).to.be.revertedWith('type must be the same or lower');
   });
 });

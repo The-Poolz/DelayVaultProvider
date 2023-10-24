@@ -13,7 +13,7 @@ async function downloadAndExtractZipAll() {
     cleanUpFolders('contracts/DelayVault');
     cleanUpFolders('contracts/LockDealNFT');
     cleanUpFolders('contracts/VaultManager');
-  } catch (error: any) {
+  } catch (error) {
     console.error('An error occurred during download and compile:', error);
   }
 }

@@ -54,7 +54,7 @@ describe('DelayVaultProvider type tier tests', async () => {
   });
 
   it('The type level should be increased if the user will have multiple nfts', async () => {
-    let params = [delayVault.tier1];
+    const params = [delayVault.tier1];
     await delayVault.token.connect(delayVault.user4).approve(delayVault.delayVaultProvider.address, delayVault.tier1);
     await delayVault.delayVaultProvider.connect(delayVault.user4).createNewDelayVault(delayVault.user4.address, params);
     await delayVault.token.connect(delayVault.user4).approve(delayVault.delayVaultProvider.address, delayVault.tier1);
