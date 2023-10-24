@@ -18,8 +18,7 @@ describe('delayVault withdraw', async () => {
     await delayVault.token.connect(user).approve(delayVault.delayVaultProvider.address, params[0]);
     await delayVault.delayVaultProvider.connect(user).createNewDelayVault(user.address, params);
     await delayVault.lockDealNFT
-      .connect(user)
-      ['safeTransferFrom(address,address,uint256)'](user.address, delayVault.lockDealNFT.address, delayVault.poolId);
+      .connect(user)['safeTransferFrom(address,address,uint256)'](user.address, delayVault.lockDealNFT.address, delayVault.poolId);
   }
 
   it('should withdraw from delayVault with tier 1', async () => {
@@ -94,8 +93,7 @@ describe('delayVault withdraw', async () => {
     await delayVault.delayVaultProvider.connect(user).createNewDelayVault(user.address, params);
     expect(await delayVault.delayVaultProvider.userToType(user.address)).to.equal(1);
     await delayVault.lockDealNFT
-      .connect(user)
-      ['safeTransferFrom(address,address,uint256)'](user.address, delayVault.lockDealNFT.address, delayVault.poolId);
+      .connect(user)['safeTransferFrom(address,address,uint256)'](user.address, delayVault.lockDealNFT.address, delayVault.poolId);
     expect(await delayVault.delayVaultProvider.userToType(user.address)).to.equal(1);
   });
 });

@@ -19,8 +19,7 @@ describe('delayVault split', async () => {
     await delayVault.delayVaultProvider.connect(creator).createNewDelayVault(creator.address, params);
     const bytes = ethers.utils.defaultAbiCoder.encode(['uint256', 'address'], [delayVault.ratio, creator.address]);
     await delayVault.lockDealNFT
-      .connect(creator)
-      ['safeTransferFrom(address,address,uint256,bytes)'](
+      .connect(creator)['safeTransferFrom(address,address,uint256,bytes)'](
         userToSplit.address,
         delayVault.lockDealNFT.address,
         delayVault.poolId,
@@ -70,8 +69,7 @@ describe('delayVault split', async () => {
     const bytes = ethers.utils.defaultAbiCoder.encode(['uint256', 'address'], [rate, delayVault.user3.address]);
     let newAmount = await delayVault.delayVaultProvider.userToAmount(owner.address);
     await delayVault.lockDealNFT
-      .connect(owner)
-      ['safeTransferFrom(address,address,uint256,bytes)'](
+      .connect(owner)['safeTransferFrom(address,address,uint256,bytes)'](
         owner.address,
         delayVault.lockDealNFT.address,
         delayVault.poolId,
@@ -90,8 +88,7 @@ describe('delayVault split', async () => {
     const bytes = ethers.utils.defaultAbiCoder.encode(['uint256', 'address'], [MAX_RATIO, delayVault.receiver.address]);
     await expect(
       delayVault.lockDealNFT
-        .connect(owner)
-        ['safeTransferFrom(address,address,uint256,bytes)'](
+        .connect(owner)['safeTransferFrom(address,address,uint256,bytes)'](
           owner.address,
           delayVault.lockDealNFT.address,
           delayVault.poolId,
