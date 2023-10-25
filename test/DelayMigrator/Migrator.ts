@@ -27,16 +27,17 @@ describe('DelayVault Migrator', function () {
   let user1: SignerWithAddress;
   let user2: SignerWithAddress;
   let user3: SignerWithAddress;
+  let user4: SignerWithAddress;
+  let user5: SignerWithAddress;
   let providerData: IDelayVaultProvider.ProviderDataStruct[];
   const tier1: BigNumber = ethers.BigNumber.from('250');
   const tier2: BigNumber = ethers.BigNumber.from('3500');
   const tier3: BigNumber = ethers.BigNumber.from('20000');
   let startTime: number, finishTime: number;
   const amount: BigNumber = ethers.BigNumber.from('1000');
-  const ONE_DAY = ethers.BigNumber.from(86400);
 
   before('Download and unzip contracts', async () => {
-    [user1, user2, user3] = await ethers.getSigners();
+    [user1, user2, user3, user4, user5] = await ethers.getSigners();
     token = await deployed(
       '@poolzfinance/poolz-helper-v2/contracts/token/ERC20Token.sol:ERC20Token',
       'TestToken',
@@ -68,6 +69,7 @@ describe('DelayVault Migrator', function () {
     await token.transfer(user1.address, amount.mul(10));
     await token.transfer(user2.address, amount.mul(10));
     await token.transfer(user3.address, amount.mul(10));
+    await token.transfer(user4.address, amount.mul(10));
   });
 
   beforeEach(async () => {});
@@ -127,6 +129,28 @@ describe('DelayVault Migrator', function () {
     // withdraw from old delay vault
     await delayVault.connect(user2).Withdraw(token.address);
     expect(await lockDealNFT['balanceOf(address)'](user2.address)).to.be.equal(1);
+  });
+
+  it('should change type if totalAmount 0', async () => {
+    // 1) create vault in old delay vault with 200 tokens
+    const tokenAmount = amount.div(5);
+    await token.connect(user4).approve(delayVault.address, amount.mul(2));
+    await delayVault.connect(user4).CreateVault(token.address, tokenAmount, 864000, 0, 0);
+    // 2) create new vault with 200 tokens
+    await token.connect(user4).approve(delayVaultProvider.address, amount.mul(2));
+    const poolId = await lockDealNFT.totalSupply();
+    await delayVaultProvider.connect(user4).createNewDelayVault(user4.address, [tokenAmount]);
+    // The user type should be increased to 1
+    expect(await delayVaultProvider.userToType(user4.address)).to.be.equal(1);
+
+    // 3) User sends 200 tokens from new vault to another user
+    await lockDealNFT.connect(user4).approvePoolTransfers(true);
+    await lockDealNFT.connect(user4).transferFrom(user4.address, user5.address, poolId);
+
+    // 4) Then do withdraw from old delay vault
+    await delayVault.connect(user4).Withdraw(token.address);
+    // The user type should be 0
+    expect(await delayVaultProvider.userToType(user4.address)).to.be.equal(0);
   });
 
   it('should increase VaultManager token balance after old delay vault withdraw', async () => {

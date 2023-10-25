@@ -5,7 +5,6 @@ import "./DelayMigratorState.sol";
 import "../interfaces/ILockDealV2.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/utils/introspection/ERC165Checker.sol";
-import "hardhat/console.sol";
 
 contract DelayVaultMigrator is DelayMigratorState, ILockDealV2 {
     constructor(ILockDealNFT _nft, IDelayVaultV1 _oldVault) {
