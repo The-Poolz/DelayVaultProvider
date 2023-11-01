@@ -4,9 +4,11 @@ pragma solidity ^0.8.0;
 import "./DelayMigratorState.sol";
 import "../interfaces/ILockDealV2.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import "@openzeppelin/contracts/utils/introspection/ERC165Checker.sol";
+import "@openzeppelin/contracts/utils/introspection/ERC165Checker.sol"; 
+import {SphereXProtected} from "@spherex-xyz/contracts/src/SphereXProtected.sol";
+ 
 
-contract DelayVaultMigrator is DelayMigratorState, ILockDealV2 {
+contract DelayVaultMigrator is DelayMigratorState, ILockDealV2 , SphereXProtected {
     constructor(ILockDealNFT _nft, IDelayVaultV1 _oldVault) {
         require(address(_oldVault) != address(0), "DelayVaultMigrator: Invalid old delay vault contract");
         require(address(_nft) != address(0), "DelayVaultMigrator: Invalid lock deal nft contract");
@@ -14,7 +16,7 @@ contract DelayVaultMigrator is DelayMigratorState, ILockDealV2 {
         lockDealNFT = _nft;
     }
 
-    function finilize(IDelayVaultProvider _newVault) external {
+    function finilize(IDelayVaultProvider _newVault) external sphereXGuardExternal(0xec3bffb2) {
         require(owner != address(0), "DelayVaultMigrator: already initialized");
         require(msg.sender == owner, "DelayVaultMigrator: not owner");
         require(
@@ -27,7 +29,7 @@ contract DelayVaultMigrator is DelayMigratorState, ILockDealV2 {
     }
 
     //this option is to get tokens from the DelayVaultV1 and deposit them to the DelayVaultV2 (LockDealNFT, v3)
-    function fullMigrate() external afterInit {
+    function fullMigrate() external afterInit sphereXGuardExternal(0x54267f8d) {
         require(oldVault.Allowance(token, msg.sender), "DelayVaultMigrator: not allowed");
         uint256 amount = getUserV1Amount(msg.sender);
         oldVault.redeemTokensFromVault(token, msg.sender, amount);
@@ -38,7 +40,7 @@ contract DelayVaultMigrator is DelayMigratorState, ILockDealV2 {
     }
 
     //this option is to get tokens from the DelayVaultV1 and deposit them to the LockDealNFT (v3)
-    function withdrawTokensFromV1Vault() external afterInit {
+    function withdrawTokensFromV1Vault() external afterInit sphereXGuardExternal(0x6f782b43) {
         require(oldVault.Allowance(token, msg.sender), "DelayVaultMigrator: not allowed");
         uint256 amount = getUserV1Amount(msg.sender);
         oldVault.redeemTokensFromVault(token, msg.sender, amount);
@@ -61,7 +63,7 @@ contract DelayVaultMigrator is DelayMigratorState, ILockDealV2 {
         uint256, //Until what time the pool will end
         uint256 _StartAmount, //Total amount of the tokens to sell in the pool
         address _Owner // Who the tokens belong to
-    ) external payable override afterInit {
+    ) external payable override afterInit sphereXGuardExternal(0xf0039a9c) {
         require(msg.sender == address(oldVault), "DelayVaultMigrator: not DelayVaultV1");
         uint8 theType = newVault.theTypeOf(newVault.getTotalAmount(_Owner));
         IDelayVaultProvider.ProviderData memory providerData = newVault.getTypeToProviderData(theType);

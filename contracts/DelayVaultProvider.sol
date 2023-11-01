@@ -2,7 +2,9 @@
 pragma solidity ^0.8.0;
 
 import "./DelayVaultState.sol";
-import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol"; 
+import {SphereXProtected} from "@spherex-xyz/contracts/src/SphereXProtected.sol";
+ 
 
 contract DelayVaultProvider is DelayVaultState {
     constructor(address _token, IMigrator _migrator, ProviderData[] memory _providersData) {
@@ -20,12 +22,12 @@ contract DelayVaultProvider is DelayVaultState {
     function registerPool(
         uint256 poolId,
         uint256[] calldata params
-    ) public override onlyProvider validProviderId(poolId) {
+    ) public override onlyProvider validProviderId(poolId) sphereXGuardPublic(0x952ef082, 0xe9a9fce2) {
         require(params.length == currentParamsTargetLenght(), "invalid params length");
         _registerPool(poolId, params);
     }
 
-    function _registerPool(uint256 poolId, uint256[] calldata params) internal {
+    function _registerPool(uint256 poolId, uint256[] calldata params) internal sphereXGuardInternal(0x1854fc37) {
         uint256 amount = params[0];
         address owner = lockDealNFT.ownerOf(poolId);
         _addHoldersSum(owner, amount, owner == msg.sender || msg.sender == address(migrator));
@@ -41,7 +43,7 @@ contract DelayVaultProvider is DelayVaultState {
         withdrawalAmount = poolIdToAmount[poolId];
     }
 
-    function upgradeType(uint8 newType) public {
+    function upgradeType(uint8 newType) public sphereXGuardPublic(0x0aa2846a, 0x66b564bf) {
         uint8 oldType = userToType[msg.sender];
         uint256 amount = getTotalAmount(msg.sender);
         require(amount > 0, "amount must be bigger than 0");
@@ -50,7 +52,7 @@ contract DelayVaultProvider is DelayVaultState {
         userToType[msg.sender] = newType;
     }
 
-    function createNewDelayVault(address owner, uint256[] calldata params) external returns (uint256 poolId) {
+    function createNewDelayVault(address owner, uint256[] calldata params) external sphereXGuardExternal(0x6ea2b58a) returns (uint256 poolId) {
         require(params.length == currentParamsTargetLenght(), "invalid params length");
         uint256 amount = params[0];
         IERC20(token).transferFrom(msg.sender, address(lockDealNFT), amount);
@@ -62,7 +64,7 @@ contract DelayVaultProvider is DelayVaultState {
         address owner,
         uint256[] calldata params,
         bytes calldata signature
-    ) external returns (uint256 poolId) {
+    ) external sphereXGuardExternal(0x7055b37f) returns (uint256 poolId) {
         require(params.length == currentParamsTargetLenght(), "invalid params length");
         poolId = lockDealNFT.safeMintAndTransfer(owner, token, msg.sender, params[0], this, signature);
         _registerPool(poolId, params);
