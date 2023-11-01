@@ -36,6 +36,7 @@
     "typescript": "^5.2.2"
   },
   "dependencies": {
+    "@spherex-xyz/contracts": "^1.0.6",
     "poolz-helper-v2": "^2.1.13"
   }
 }
