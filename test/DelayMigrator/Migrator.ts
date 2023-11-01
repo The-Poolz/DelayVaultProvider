@@ -39,7 +39,7 @@ describe('DelayVault Migrator', function () {
   before('Download and unzip contracts', async () => {
     [user1, user2, user3, user4, user5] = await ethers.getSigners();
     token = await deployed(
-      '@poolzfinance/poolz-helper-v2/contracts/token/ERC20Token.sol:ERC20Token',
+      'ERC20Token',
       'TestToken',
       'TEST',
     );

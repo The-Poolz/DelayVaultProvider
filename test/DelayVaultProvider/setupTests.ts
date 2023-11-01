@@ -51,7 +51,7 @@ export class DelaySetup {
     this.mockProvider = await deployed('MockProvider', this.lockDealNFT.address, this.timedDealProvider.address);
     this.delayVault = await deployed('DelayVault');
     this.token = await deployed(
-      '@poolzfinance/poolz-helper-v2/contracts/token/ERC20Token.sol:ERC20Token',
+      'ERC20Token',
       'Token',
       'TKN',
     );

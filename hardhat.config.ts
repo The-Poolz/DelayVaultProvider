@@ -3,6 +3,16 @@ import "@truffle/dashboard-hardhat-plugin"
 import "hardhat-gas-reporter"
 import { HardhatUserConfig } from "hardhat/config"
 import "solidity-coverage"
+import "hardhat-preprocessor";
+import * as fs from 'fs';
+
+function getRemappings() {
+    return fs
+      .readFileSync("remappings.txt", "utf8")
+      .split("\n")
+      .filter(Boolean) // remove empty lines
+      .map((line) => line.trim().split("="));
+  }
 
 const config: HardhatUserConfig = {
     defaultNetwork: "hardhat",
@@ -41,6 +51,21 @@ const config: HardhatUserConfig = {
         noColors: true,
         outputFile: "gas-report.txt",
     },
+    preprocess: {
+        eachLine: (hre) => ({
+          transform: (line: string) => {
+            if (line.match(/^\s*import /i)) {
+              for (const [from, to] of getRemappings()) {
+                if (line.includes(from)) {
+                  line = line.replace(from, to);
+                  break;
+                }
+              }
+            }
+            return line;
+          },
+        }),
+      },
 }
 
 export default config
