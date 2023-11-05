@@ -11,3 +11,7 @@ coverage.json
 LockDealNFT*
 DelayVault
 VaultManager*
+
+# SphereX
+code_id_mapping.json
+inheritance_code.md
