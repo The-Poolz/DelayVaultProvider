@@ -3,8 +3,8 @@ pragma solidity ^0.8.0;
 
 import "./DelayMigratorState.sol";
 import "../interfaces/ILockDealV2.sol";
-import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import "@openzeppelin/contracts/utils/introspection/ERC165Checker.sol"; 
+import "@spherex-xyz/openzeppelin-solidity/contracts/token/ERC20/IERC20.sol";
+import "@spherex-xyz/openzeppelin-solidity/contracts/utils/introspection/ERC165Checker.sol"; 
 import {SphereXProtected} from "@spherex-xyz/contracts/src/SphereXProtected.sol";
  
 

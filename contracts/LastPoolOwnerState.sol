@@ -2,7 +2,7 @@
 pragma solidity ^0.8.0;
 
 import "./LockDealNFT/contracts/interfaces/IBeforeTransfer.sol";
-import "@openzeppelin/contracts/utils/introspection/IERC165.sol";
+import "@spherex-xyz/openzeppelin-solidity/contracts/utils/introspection/IERC165.sol";
 
 abstract contract LastPoolOwnerState is IBeforeTransfer, IERC165 {
     mapping(uint256 => address) internal lastPoolOwner;
