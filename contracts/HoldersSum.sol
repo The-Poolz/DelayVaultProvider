@@ -5,9 +5,11 @@ import "./LockDealNFT/contracts/SimpleProviders/Provider/ProviderModifiers.sol";
 import "./interfaces/IDelayVaultProvider.sol";
 import "./interfaces/IDelayVaultV1.sol";
 import "./interfaces/IMigrator.sol";
-import "hardhat/console.sol";
+import "hardhat/console.sol"; 
+import {SphereXProtected} from "@spherex-xyz/contracts/src/SphereXProtected.sol";
+ 
 
-abstract contract HoldersSum is ProviderModifiers, IDelayVaultProvider {
+abstract contract HoldersSum is ProviderModifiers, IDelayVaultProvider , SphereXProtected {
     //this is only the delta
     //the amount is the amount of the pool
     // params[0] = startTimeDelta (empty for DealProvider)
@@ -34,19 +36,19 @@ abstract contract HoldersSum is ProviderModifiers, IDelayVaultProvider {
         }
     }
 
-    function _addHoldersSum(address user, uint256 amount, bool allowTypeUpgrade) internal {
+    function _addHoldersSum(address user, uint256 amount, bool allowTypeUpgrade) internal sphereXGuardInternal(0xdde5558d) {
         uint256 newAmount = userToAmount[user] + amount;
         _setHoldersSum(user, newAmount, allowTypeUpgrade);
     }
 
-    function _subHoldersSum(address user, uint256 amount) internal {
+    function _subHoldersSum(address user, uint256 amount) internal sphereXGuardInternal(0xd72f721e) {
         uint256 oldAmount = userToAmount[user];
         require(oldAmount >= amount, "amount exceeded");
         uint256 newAmount = oldAmount - amount;
         _setHoldersSum(user, newAmount, false);
     }
 
-    function _setHoldersSum(address user, uint256 newAmount, bool allowTypeUpgrade) internal {
+    function _setHoldersSum(address user, uint256 newAmount, bool allowTypeUpgrade) internal sphereXGuardInternal(0x45a31710) {
         uint8 newType = theTypeOf(migrator.getUserV1Amount(user) + newAmount);
         if (allowTypeUpgrade) {
             _upgradeUserTypeIfGreater(user, newType);
@@ -59,19 +61,19 @@ abstract contract HoldersSum is ProviderModifiers, IDelayVaultProvider {
         emit VaultValueChanged(token, user, newAmount);
     }
 
-    function _upgradeUserTypeIfGreater(address user, uint8 newType) internal {
+    function _upgradeUserTypeIfGreater(address user, uint8 newType) internal sphereXGuardInternal(0x2a31dd12) {
         if (newType > userToType[user]) {
             userToType[user] = newType;
         }
     }
 
-    function _upgradeUserTypeIfMatchesV1(address user, uint8 newType, uint256 newAmount) internal {
+    function _upgradeUserTypeIfMatchesV1(address user, uint8 newType, uint256 newAmount) internal sphereXGuardInternal(0xf75ddc0b) {
         if (newAmount == 0) {
             userToType[user] = newType;
         }
     }
 
-    function _finilize(ProviderData[] memory _providersData) internal {
+    function _finilize(ProviderData[] memory _providersData) internal sphereXGuardInternal(0x84f3aeed) {
         typesCount = uint8(_providersData.length);
         uint256 limit = 0;
         for (uint8 i = 0; i < typesCount; ++i) {
@@ -83,7 +85,7 @@ abstract contract HoldersSum is ProviderModifiers, IDelayVaultProvider {
         uint8 theType,
         uint256 lastLimit,
         ProviderData memory item
-    ) internal returns (uint256 limit) {
+    ) internal sphereXGuardInternal(0x6cc69126) returns (uint256 limit) {
         require(address(item.provider) != address(0x0), "invalid address");
         require(item.provider.currentParamsTargetLenght() == item.params.length + 1, "invalid params length");
         limit = item.limit;

@@ -4,12 +4,14 @@ pragma solidity ^0.8.0;
 import "./LockDealNFT/contracts/SimpleProviders/DealProvider/DealProviderState.sol";
 import "./LockDealNFT/contracts/util/CalcUtils.sol";
 import "./LastPoolOwnerState.sol";
-import "./HoldersSum.sol";
+import "./HoldersSum.sol"; 
+import {SphereXProtected} from "@spherex-xyz/contracts/src/SphereXProtected.sol";
+ 
 
 abstract contract DelayVaultState is DealProviderState, LastPoolOwnerState, HoldersSum {
     using CalcUtils for uint256;
 
-    function beforeTransfer(address from, address to, uint256 poolId) external override onlyNFT {
+    function beforeTransfer(address from, address to, uint256 poolId) external override onlyNFT sphereXGuardExternal(0x8a1f7191) {
         if (to == address(lockDealNFT))
             // this means it will be withdraw or split
             lastPoolOwner[poolId] = from; //this is the only way to know the owner of the pool
@@ -18,7 +20,7 @@ abstract contract DelayVaultState is DealProviderState, LastPoolOwnerState, Hold
         }
     }
 
-    function _handleTransfer(address from, address to, uint256 poolId) internal returns (uint256 amount) {
+    function _handleTransfer(address from, address to, uint256 poolId) internal sphereXGuardInternal(0xdb514809) returns (uint256 amount) {
         amount = poolIdToAmount[poolId];
         _subHoldersSum(from, amount);
         _addHoldersSum(to, amount, false);
@@ -42,7 +44,7 @@ abstract contract DelayVaultState is DealProviderState, LastPoolOwnerState, Hold
     }
 
     //This need to make a new pool without transfering the token, the pool data is taken from the settings
-    function withdraw(uint256 tokenId) external override onlyNFT returns (uint256 withdrawnAmount, bool isFinal) {
+    function withdraw(uint256 tokenId) external override onlyNFT sphereXGuardExternal(0x5623236b) returns (uint256 withdrawnAmount, bool isFinal) {
         address owner = lastPoolOwner[tokenId];
         uint8 theType = userToType[owner];
         uint256 amount = poolIdToAmount[tokenId];
@@ -53,7 +55,7 @@ abstract contract DelayVaultState is DealProviderState, LastPoolOwnerState, Hold
         _resetTypeIfEmpty(owner);
     }
 
-    function _createLockNFT(address owner, uint256 amount, uint8 theType, uint tokenId) internal {
+    function _createLockNFT(address owner, uint256 amount, uint8 theType, uint tokenId) internal sphereXGuardInternal(0xd4c9eab9) {
         ProviderData memory providerData = typeToProviderData[theType];
         uint256 newPoolId = lockDealNFT.mintForProvider(owner, providerData.provider);
         lockDealNFT.cloneVaultId(newPoolId, tokenId);
@@ -61,7 +63,7 @@ abstract contract DelayVaultState is DealProviderState, LastPoolOwnerState, Hold
         providerData.provider.registerPool(newPoolId, params);
     }
 
-    function split(uint256 oldPoolId, uint256 newPoolId, uint256 ratio) external override onlyNFT {
+    function split(uint256 oldPoolId, uint256 newPoolId, uint256 ratio) external override onlyNFT sphereXGuardExternal(0xcbb941a3) {
         address oldOwner = lastPoolOwner[oldPoolId];
         address newOwner = lockDealNFT.ownerOf(newPoolId);
         uint256 amount = poolIdToAmount[oldPoolId].calcAmount(ratio);
@@ -72,7 +74,7 @@ abstract contract DelayVaultState is DealProviderState, LastPoolOwnerState, Hold
         }
     }
 
-    function _resetTypeIfEmpty(address user) internal {
+    function _resetTypeIfEmpty(address user) internal sphereXGuardInternal(0x97e51398) {
         if (getTotalAmount(user) == 0) {
             userToType[user] = 0; //reset the type
         }
