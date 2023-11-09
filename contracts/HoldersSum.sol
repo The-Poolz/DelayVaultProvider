@@ -5,7 +5,6 @@ import "./LockDealNFT/contracts/SimpleProviders/Provider/ProviderModifiers.sol";
 import "./interfaces/IDelayVaultProvider.sol";
 import "./interfaces/IDelayVaultV1.sol";
 import "./interfaces/IMigrator.sol";
-import "hardhat/console.sol";
 
 abstract contract HoldersSum is ProviderModifiers, IDelayVaultProvider {
     //this is only the delta
@@ -30,6 +29,30 @@ abstract contract HoldersSum is ProviderModifiers, IDelayVaultProvider {
             if (amount <= typeToProviderData[i].limit) {
                 theType = i;
                 break;
+            }
+        }
+    }
+
+    ///@return balance - number of NFTs owned by `user` by current provider
+    function balanceOf(address user) public view returns (uint256 balance) {
+        uint256 fullBalanceOf = lockDealNFT.balanceOf(user);
+        for (uint256 i = 0; i < fullBalanceOf; ++i) {
+            if (this == lockDealNFT.poolIdToProvider(lockDealNFT.tokenOfOwnerByIndex(user, i))) {
+                ++balance;
+            }
+        }
+    }
+
+    ///@dev DelayVault NFT Token Of Owner By Index
+    function tokenOfOwnerByIndex(address user, uint256 index) public view returns (uint256 poolId) {
+        uint256 length = balanceOf(user);
+        require(index < length, "invalid index poolId");
+        uint256 fullBalanceOf = lockDealNFT.balanceOf(user);
+        uint256 j = 0;
+        for (uint256 i = 0; i < fullBalanceOf; ++i) {
+            poolId = lockDealNFT.tokenOfOwnerByIndex(user, i);
+            if (this == lockDealNFT.poolIdToProvider(poolId) && j++ == index) {
+                return poolId;
             }
         }
     }
