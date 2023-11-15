@@ -9,17 +9,13 @@ fs.readFile('gas-report.txt', 'utf8', (err, data) => {
 
   // Initialize the Markdown content with the header
   let mdContent = '# Gas Test Report 📊\nThe gas test results are as follows:\n';
+  let description =
+    '\n| Contract | Method | Min | Max | Avg | # calls |\n|----------|--------|-----|-----|-----|---------|\n';
 
-  // Add the LockDealNFT table header
-  mdContent +=
-    '## LockDealNFT\n| Contract | Method | Min | Max | Avg | # calls |\n|----------|--------|-----|-----|-----|---------|\n';
+  let mdProvider = '## DelayVaultProvider' + description;
+  let mdMigrator = '## DelayVaultMigrator' + description;
+  let oldDelayVault = '## Old DelayVault' + description;
 
-  let mdSimpleProvider =
-    '## Simple Providers\n| Contract | Method | Min | Max | Avg | # calls |\n|----------|--------|-----|-----|-----|---------|\n';
-  let mdAdvancedProvider =
-    '## Advanced Providers\n| Contract | Method | Min | Max | Avg | # calls |\n|----------|--------|-----|-----|-----|---------|\n';
-  let mdBuilders =
-    '## Builders\n| Contract | Method | Min | Max | Avg | # calls |\n|----------|--------|-----|-----|-----|---------|\n';
   // Add the Deployments table header
   let mdDeployments =
     '## Deployments\n| Contract | Min | Max | Avg | % of limit |\n|----------|-----|-----|-----|------------|\n';
@@ -41,30 +37,25 @@ fs.readFile('gas-report.txt', 'utf8', (err, data) => {
         /(\w+)\s+·\s+(.+?)\s+·\s+(\d+|-)\s+·\s+(\d+|-)\s+·\s+(\d+|-)\s+·\s+(\d+|-)\s+·\s+(-|\d+)/,
       );
       if (match) {
-        const [, contract, method, min, max, avg, calls, usd] = match;
-        if (contract.toLowerCase().includes('nft')) {
-          mdContent += `| ${contract} | ${method} | ${min} | ${max} | ${avg} | ${calls} |\n`;
+        const [, contract, method, min, max, avg, calls] = match;
+        if (contract.includes('DelayVaultProvider')) {
+          mdProvider += `| ${contract} | ${method} | ${min} | ${max} | ${avg} | ${calls} |\n`;
+        } else if (contract.includes('DelayVaultMigrator')) {
+          mdMigrator += `| ${contract} | ${method} | ${min} | ${max} | ${avg} | ${calls} |\n`;
         } else if (
-          contract.includes('DealProvider') ||
-          contract.includes('LockDealProvider') ||
-          contract.includes('TimedDealProvider')
+          contract.includes('DelayVault') &&
+          method == 'CreateVault(address,uint256,uint256,uint256,uint256)'
         ) {
-          mdSimpleProvider += `| ${contract} | ${method} | ${min} | ${max} | ${avg} | ${calls} |\n`;
-        } else if (
-          contract.includes('RefundProvider') ||
-          contract.includes('CollateralProvider') ||
-          contract.includes('BundleProvider')
-        ) {
-          mdAdvancedProvider += `| ${contract} | ${method} | ${min} | ${max} | ${avg} | ${calls} |\n`;
-        } else if (contract.includes('Builder')) {
-          mdBuilders += `| ${contract} | ${method} | ${min} | ${max} | ${avg} | ${calls} |\n`;
+          oldDelayVault += `| ${contract} | ${method} | ${min} | ${max} | ${avg} | ${calls} |\n`;
+        } else if (contract.includes('DelayVault') && method == 'Withdraw(address)') {
+          oldDelayVault += `| ${contract + " + DelayVaultMigrator"} | ${method} | ${min} | ${max} | ${avg} | ${calls} |\n`;
         }
       }
     } else {
       const match = line.match(/(\w+)\s+·\s+(\d+|-)\s+·\s+(\d+|-)\s+·\s+(\d+|-)\s+·\s+(\d+\.\s?\d+\s%)\s+·\s+(-|\d+)/);
       if (match) {
         const [, contract, min, max, avg, limit, usd] = match;
-        if (!contract.toLowerCase().includes('mock')) {
+        if (contract.includes('DelayVaultProvider') || contract.includes('DelayVaultMigrator')) {
           mdDeployments += `| ${contract} | ${min} | ${max} | ${avg} | ${limit} | ${usd} |\n`;
         }
       }
@@ -72,7 +63,7 @@ fs.readFile('gas-report.txt', 'utf8', (err, data) => {
   });
 
   // Combine the parsed content
-  mdContent += mdSimpleProvider += mdAdvancedProvider += mdBuilders += mdDeployments;
+  mdContent += mdProvider += oldDelayVault += mdMigrator += mdDeployments;
 
   // Write to md_gas_report.txt
   fs.writeFile('md_gas_report.txt', mdContent, err => {
