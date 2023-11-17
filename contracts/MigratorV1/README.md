@@ -1,5 +1,7 @@
-# Migrator
-**The Migrator** is a smart contract that enables the transfer of [ERC20](https://ethereum.org/developers/docs/standards/tokens/erc-20/) tokens from a [DelayVault](https://github.com/The-Poolz/DelayVault) contract to a more recent system. Once granted **User** approval, **The Migrator** orchestrates the graceful transfer of tokens from the old **DelayVault** to the new one, meticulously preserving all the settings of the previous vault.
+# DelayVaultMigrator
+**The DelayVaultMigrator** is a smart contract that enables the transfer of [ERC20](https://ethereum.org/developers/docs/standards/tokens/erc-20/) tokens from a [DelayVault](https://github.com/The-Poolz/DelayVault) contract to a more recent system. Once granted **User** approval, **The Migrator** orchestrates the graceful transfer of tokens from the old **DelayVault** to the new one, meticulously preserving all the settings of the previous vault.
+
+**BSC Testnet** `DelayVaultMigrator` [link](https://testnet.bscscan.com/address/0x7ec30495a2dbf8afc02fd6451a8ae6685e93f12d)
 
 ### Navigation
 
@@ -28,11 +30,15 @@ function fullMigrate() external afterInit
 ```
 After user approval in the old **DelayValt**, we can make exactly the same copy of the vault but using the new system. The user receives an `DelayVaultProvider NFT` that will indicate the right to own the pool.
 
+**BSC Testnet** transaction [link](https://testnet.bscscan.com/tx/0x5e7077aef9784b27e7e161b9f6155525934cd447785790f6e774911bf5b37428)
+
 ### Withdraw Tokens From V1Vault
 ```solidity
 function withdrawTokensFromV1Vault() external afterInit
 ```
 If the user has authorized the use of the new system but still wishes to withdraw tokens without utilizing the new **DelayVault NFT**, they can initiate a withdrawal option, triggering an automated withdrawal process. An unlocking period is then necessary, providing an opportunity to receive the tokens. The user will be granted one of the simple NFT providers, serving as proof of ownership for the temporarily locked amount.
+
+**BSC Testnet** transaction [link](https://testnet.bscscan.com/tx/0xdd132205af5aa14b5f305c635ca308c7cf5af9733546a06f8439dc6f12f8df23)
 
 ### Create New NFT Pool 
 ```solidity
@@ -46,6 +52,8 @@ function CreateNewPool(
     )
 ```
 The capability to seamlessly transition to the new system when withdrawing funds from the old **DelayVault** is facilitated by substituting the **LockDealV2** contract address with the new system in the old **DelayVault**. When a withdrawal occurs in the old system, the user is automatically transferred to the new system, initiating the withdrawal process using the new system options. The user will be granted one of the simple NFT providers, serving as proof of ownership for the temporarily locked amount.
+
+**BSC Testnet** transaction [link](https://testnet.bscscan.com/tx/0x19a19fc4d6817f65c4a66b9a754fbb276a8f325483049d06cf62fca13cd6c873)
 
 ## License
 [The-Poolz](https://poolz.finance/) Contracts is released under the [MIT License](https://github.com/The-Poolz/DelayVaultProvider/blob/master/LICENSE).
