@@ -3,7 +3,6 @@ pragma solidity ^0.8.0;
 
 import "./LockDealNFT/contracts/SimpleProviders/Provider/ProviderModifiers.sol";
 import "./interfaces/IDelayVaultProvider.sol";
-import "./interfaces/IDelayVaultV1.sol";
 import "./interfaces/IMigrator.sol";
 
 /**
