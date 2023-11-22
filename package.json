@@ -4,7 +4,8 @@
   "description": "Contract for creating fixed price lunch",
   "main": "index.js",
   "scripts": {
-    "test": "npx hardhat test"
+    "test": "npx hardhat test",
+    "postinstall": "npx ts-node ./scripts/fileImport.ts"
   },
   "author": "Lomet",
   "license": "ISC",

@@ -22,11 +22,6 @@ Or using the [Yarn](https://yarnpkg.com/) package manager:
 ```console
 yarn
 ```
-Download integration contracts:
-
-```console
-npx ts-node ./scripts/fileImport.ts
-```
 Compile contracts:
 ```console
 npx hardhat compile
