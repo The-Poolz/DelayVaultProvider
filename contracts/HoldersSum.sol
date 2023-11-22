@@ -38,10 +38,17 @@ abstract contract HoldersSum is ProviderModifiers, IDelayVaultProvider {
      * @return theType The deterfmined tier type.
      */
     function theTypeOf(uint256 amount) public view returns (uint8 theType) {
-        for (uint8 i = 0; i < typesCount; ++i) {
-            if (amount <= typeToProviderData[i].limit) {
-                theType = i;
-                break;
+        uint8 low = 0;
+        uint8 high = typesCount;
+        while (low < high) {
+            uint8 mid = (low + high) / 2;
+            uint256 midLimit = typeToProviderData[mid].limit;
+
+            if (amount <= midLimit) {
+                high = mid;
+                theType = mid; // Set the result, but continue the search in case there is a smaller match
+            } else {
+                low = mid + 1;
             }
         }
     }
