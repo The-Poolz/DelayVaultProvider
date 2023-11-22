@@ -90,8 +90,8 @@ describe('DelayVault Migrator', function () {
     await vaultManager['createNewVault(address)'](token.address);
   });
 
-  it('should finilaze migrator', async () => {
-    await delayVaultMigrator.finilize(delayVaultProvider.address);
+  it('should finalize migrator', async () => {
+    await delayVaultMigrator.finalize(delayVaultProvider.address);
     expect(await delayVaultMigrator.newVault()).to.be.equal(delayVaultProvider.address);
     expect(await delayVaultMigrator.token()).to.be.equal(token.address);
     expect(await delayVaultMigrator.owner()).to.be.equal(constants.AddressZero);
