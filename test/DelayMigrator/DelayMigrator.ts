@@ -85,13 +85,13 @@ describe('Delay Migrator tests', function () {
   });
 
   it('should revert invalid delayVaultProvider', async () => {
-    await expect(delayVaultMigrator.finilize(delayVaultMigrator.address)).to.be.revertedWith(
+    await expect(delayVaultMigrator.finalize(delayVaultMigrator.address)).to.be.revertedWith(
       'DelayVaultMigrator: Invalid new delay vault contract',
     );
   });
 
   it('should revert invalid owner call', async () => {
-    await expect(delayVaultMigrator.connect(user2).finilize(delayVaultProvider.address)).to.be.revertedWith(
+    await expect(delayVaultMigrator.connect(user2).finalize(delayVaultProvider.address)).to.be.revertedWith(
       'DelayVaultMigrator: not owner',
     );
   });
@@ -101,8 +101,8 @@ describe('Delay Migrator tests', function () {
     await expect(delayVaultMigrator.fullMigrate()).to.be.revertedWith('DelayVaultMigrator: not initialized');
   });
 
-  it('should finilize data', async () => {
-    await delayVaultMigrator.finilize(delayVaultProvider.address);
+  it('should finalize data', async () => {
+    await delayVaultMigrator.finalize(delayVaultProvider.address);
     expect(await delayVaultMigrator.newVault()).to.be.equal(delayVaultProvider.address);
     expect(await delayVaultMigrator.token()).to.be.equal(token);
     expect(await delayVaultMigrator.owner()).to.be.equal(constants.AddressZero);
