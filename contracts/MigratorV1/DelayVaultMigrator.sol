@@ -14,7 +14,7 @@ contract DelayVaultMigrator is DelayMigratorState, ILockDealV2 {
         lockDealNFT = _nft;
     }
 
-    function finilize(IDelayVaultProvider _newVault) external {
+    function finalize(IDelayVaultProvider _newVault) external {
         require(owner != address(0), "DelayVaultMigrator: already initialized");
         require(msg.sender == owner, "DelayVaultMigrator: not owner");
         require(
