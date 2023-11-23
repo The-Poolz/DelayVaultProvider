@@ -149,7 +149,7 @@ abstract contract HoldersSum is ProviderModifiers, IDelayVaultProvider {
      * @dev Internal function to finalize the initialization of tier types and provider data.
      * @param _providersData Array of provider data for different tier types.
      */
-    function _finilize(ProviderData[] memory _providersData) internal {
+    function _finalize(ProviderData[] memory _providersData) internal {
         typesCount = uint8(_providersData.length);
         uint256 limit = 0;
         for (uint8 i = 0; i < typesCount; ++i) {
