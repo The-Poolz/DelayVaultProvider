@@ -29,6 +29,9 @@ jobs:
         if: steps.restore-cache.outputs.cache-hit != 'true'
         run: npm i hardhat
 
+      - name: File Import
+        run: npx ts-node ./scripts/fileImport.ts
+
       - name: Run gas tests and generate report
         id: gas_test
         run: npx hardhat test
@@ -68,6 +71,9 @@ jobs:
       - name: Install HardHat
         if: steps.restore-cache.outputs.cache-hit != 'true'
         run: npm i hardhat
+
+      - name: File Import
+        run: npx ts-node ./scripts/fileImport.ts
 
       - name: Run tests and generate coverage
         run: npx hardhat coverage
