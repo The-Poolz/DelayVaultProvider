@@ -36,6 +36,7 @@
     "typescript": "^5.2.2"
   },
   "dependencies": {
+    "@ironblocks/firewall-consumer": "^1.0.3",
     "poolz-helper-v2": "^2.1.13"
   }
 }

@@ -3,6 +3,7 @@ pragma solidity ^0.8.0;
 
 import "./DelayVaultState.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "@ironblocks/firewall-consumer/contracts/FirewallConsumer.sol";
 
 /**
  * @title DelayVaultProvider
@@ -34,8 +35,8 @@ contract DelayVaultProvider is DelayVaultState {
     function registerPool(
         uint256 poolId,
         uint256[] calldata params
-    ) public override onlyProvider validProviderId(poolId) {
-        require(params.length == currentParamsTargetLenght(), "invalid params length");
+    ) external override firewallProtected onlyProvider validProviderId(poolId) {
+        require(params.length == currentParamsTargetLength(), "invalid params length");
         _registerPool(poolId, params);
     }
 
@@ -44,7 +45,10 @@ contract DelayVaultProvider is DelayVaultState {
      * @param poolId Identifier for the DelayVaultProvider NFT pool.
      * @param params Array of parameters including the amount of tokens stored in the pool.
      */
-    function _registerPool(uint256 poolId, uint256[] calldata params) internal {
+    function _registerPool(uint256 poolId, uint256[] calldata params)
+        internal
+        firewallProtectedCustom(abi.encodePacked(bytes4(0xdf3aac25)))
+    {
         uint256 amount = params[0];
         address owner = lockDealNFT.ownerOf(poolId);
         _addHoldersSum(owner, amount, owner == msg.sender || msg.sender == address(migrator));
@@ -74,7 +78,7 @@ contract DelayVaultProvider is DelayVaultState {
      * @dev Allows a user to upgrade their account type, subject to certain conditions.
      * @param newType The new account type.
      */
-    function upgradeType(uint8 newType) public {
+    function upgradeType(uint8 newType) external firewallProtected {
         uint8 oldType = userToType[msg.sender];
         uint256 amount = getTotalAmount(msg.sender);
         require(amount > 0, "amount must be bigger than 0");
@@ -89,8 +93,8 @@ contract DelayVaultProvider is DelayVaultState {
      * @param params Array with one parameter. params[0] - the amount of tokens stored in the pool.
      * @return poolId The created pool ID.
      */
-    function createNewDelayVault(address owner, uint256[] calldata params) external returns (uint256 poolId) {
-        require(params.length == currentParamsTargetLenght(), "invalid params length");
+    function createNewDelayVault(address owner, uint256[] calldata params) external firewallProtected returns (uint256 poolId) {
+        require(params.length == currentParamsTargetLength(), "invalid params length");
         uint256 amount = params[0];
         IERC20(token).transferFrom(msg.sender, address(lockDealNFT), amount);
         poolId = lockDealNFT.mintAndTransfer(owner, token, amount, this);
@@ -108,8 +112,8 @@ contract DelayVaultProvider is DelayVaultState {
         address owner,
         uint256[] calldata params,
         bytes calldata signature
-    ) external returns (uint256 poolId) {
-        require(params.length == currentParamsTargetLenght(), "invalid params length");
+    ) external firewallProtected returns (uint256 poolId) {
+        require(params.length == currentParamsTargetLength(), "invalid params length");
         poolId = lockDealNFT.safeMintAndTransfer(owner, token, msg.sender, params[0], this, signature);
         _registerPool(poolId, params);
     }

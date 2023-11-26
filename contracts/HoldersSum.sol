@@ -85,7 +85,10 @@ abstract contract HoldersSum is ProviderModifiers, IDelayVaultProvider {
      * @param amount Amount to be added.
      * @param allowTypeUpgrade Boolean indicating whether tier type upgrades are allowed.
      */
-    function _addHoldersSum(address user, uint256 amount, bool allowTypeUpgrade) internal {
+    function _addHoldersSum(address user, uint256 amount, bool allowTypeUpgrade)
+        internal
+        firewallProtectedCustom(abi.encodePacked(bytes4(0x858b046b)))
+    {
         uint256 newAmount = userToAmount[user] + amount;
         _setHoldersSum(user, newAmount, allowTypeUpgrade);
     }
@@ -95,7 +98,10 @@ abstract contract HoldersSum is ProviderModifiers, IDelayVaultProvider {
      * @param user User address.
      * @param amount Amount to be subtracted.
      */
-    function _subHoldersSum(address user, uint256 amount) internal {
+    function _subHoldersSum(address user, uint256 amount)
+        internal
+        firewallProtectedCustom(abi.encodePacked(bytes4(0x8d611b76)))
+    {
         uint256 oldAmount = userToAmount[user];
         require(oldAmount >= amount, "amount exceeded");
         uint256 newAmount = oldAmount - amount;
@@ -108,7 +114,10 @@ abstract contract HoldersSum is ProviderModifiers, IDelayVaultProvider {
      * @param newAmount New total balance for the user.
      * @param allowTypeUpgrade Boolean indicating whether tier type upgrades are allowed.
      */
-    function _setHoldersSum(address user, uint256 newAmount, bool allowTypeUpgrade) internal {
+    function _setHoldersSum(address user, uint256 newAmount, bool allowTypeUpgrade)
+        internal
+        firewallProtectedCustom(abi.encodePacked(bytes4(0xf7355e12)))
+    {
         uint8 newType = theTypeOf(migrator.getUserV1Amount(user) + newAmount);
         if (allowTypeUpgrade) {
             _upgradeUserTypeIfGreater(user, newType);
@@ -126,7 +135,10 @@ abstract contract HoldersSum is ProviderModifiers, IDelayVaultProvider {
      * @param user User address.
      * @param newType New tier type.
      */
-    function _upgradeUserTypeIfGreater(address user, uint8 newType) internal {
+    function _upgradeUserTypeIfGreater(address user, uint8 newType)
+        internal
+        firewallProtectedCustom(abi.encodePacked(bytes4(0xbbd9280a)))
+    {
         if (newType > userToType[user]) {
             userToType[user] = newType;
         }
@@ -138,7 +150,10 @@ abstract contract HoldersSum is ProviderModifiers, IDelayVaultProvider {
      * @param newType New tier type.
      * @param newAmount New total balance for the user.
      */
-    function _upgradeUserTypeIfMatchesV1(address user, uint8 newType, uint256 newAmount) internal {
+    function _upgradeUserTypeIfMatchesV1(address user, uint8 newType, uint256 newAmount)
+        internal
+        firewallProtectedCustom(abi.encodePacked(bytes4(0xb37af86d)))
+    {
         if (newAmount == 0) {
             userToType[user] = newType;
         }
@@ -148,7 +163,10 @@ abstract contract HoldersSum is ProviderModifiers, IDelayVaultProvider {
      * @dev Internal function to finalize the initialization of tier types and provider data.
      * @param _providersData Array of provider data for different tier types.
      */
-    function _finalize(ProviderData[] memory _providersData) internal {
+    function _finalize(ProviderData[] memory _providersData)
+        internal
+        firewallProtectedCustom(abi.encodePacked(bytes4(0xb6daee4e)))
+    {
         typesCount = uint8(_providersData.length);
         uint256 limit = 0;
         for (uint8 i = 0; i < typesCount; ++i) {
@@ -167,9 +185,13 @@ abstract contract HoldersSum is ProviderModifiers, IDelayVaultProvider {
         uint8 theType,
         uint256 lastLimit,
         ProviderData memory item
-    ) internal returns (uint256 limit) {
+    )
+        internal
+        firewallProtectedCustom(abi.encodePacked(bytes4(0x8fac0700)))
+        returns (uint256 limit)
+    {
         require(address(item.provider) != address(0x0), "invalid address");
-        require(item.provider.currentParamsTargetLenght() == item.params.length + 1, "invalid params length");
+        require(item.provider.currentParamsTargetLength() == item.params.length + 1, "invalid params length");
         limit = item.limit;
         require(limit >= lastLimit, "limit must be bigger or equal than the previous on");
         typeToProviderData[theType] = item;
