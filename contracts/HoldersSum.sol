@@ -87,7 +87,7 @@ abstract contract HoldersSum is ProviderModifiers, IDelayVaultProvider {
      */
     function _addHoldersSum(address user, uint256 amount, bool allowTypeUpgrade)
         internal
-        firewallProtectedCustom(abi.encodePacked(bytes4(0x858b046b)))
+        firewallProtectedSig(0x858b046b)
     {
         uint256 newAmount = userToAmount[user] + amount;
         _setHoldersSum(user, newAmount, allowTypeUpgrade);
@@ -98,10 +98,7 @@ abstract contract HoldersSum is ProviderModifiers, IDelayVaultProvider {
      * @param user User address.
      * @param amount Amount to be subtracted.
      */
-    function _subHoldersSum(address user, uint256 amount)
-        internal
-        firewallProtectedCustom(abi.encodePacked(bytes4(0x8d611b76)))
-    {
+    function _subHoldersSum(address user, uint256 amount) internal firewallProtectedSig(0x8d611b76) {
         uint256 oldAmount = userToAmount[user];
         require(oldAmount >= amount, "amount exceeded");
         uint256 newAmount = oldAmount - amount;
@@ -116,7 +113,7 @@ abstract contract HoldersSum is ProviderModifiers, IDelayVaultProvider {
      */
     function _setHoldersSum(address user, uint256 newAmount, bool allowTypeUpgrade)
         internal
-        firewallProtectedCustom(abi.encodePacked(bytes4(0xf7355e12)))
+        firewallProtectedSig(0xf7355e12)
     {
         uint8 newType = theTypeOf(migrator.getUserV1Amount(user) + newAmount);
         if (allowTypeUpgrade) {
@@ -135,10 +132,7 @@ abstract contract HoldersSum is ProviderModifiers, IDelayVaultProvider {
      * @param user User address.
      * @param newType New tier type.
      */
-    function _upgradeUserTypeIfGreater(address user, uint8 newType)
-        internal
-        firewallProtectedCustom(abi.encodePacked(bytes4(0xbbd9280a)))
-    {
+    function _upgradeUserTypeIfGreater(address user, uint8 newType) internal firewallProtectedSig(0xbbd9280a) {
         if (newType > userToType[user]) {
             userToType[user] = newType;
         }
@@ -152,7 +146,7 @@ abstract contract HoldersSum is ProviderModifiers, IDelayVaultProvider {
      */
     function _upgradeUserTypeIfMatchesV1(address user, uint8 newType, uint256 newAmount)
         internal
-        firewallProtectedCustom(abi.encodePacked(bytes4(0xb37af86d)))
+        firewallProtectedSig(0xb37af86d)
     {
         if (newAmount == 0) {
             userToType[user] = newType;
@@ -163,10 +157,7 @@ abstract contract HoldersSum is ProviderModifiers, IDelayVaultProvider {
      * @dev Internal function to finalize the initialization of tier types and provider data.
      * @param _providersData Array of provider data for different tier types.
      */
-    function _finalize(ProviderData[] memory _providersData)
-        internal
-        firewallProtectedCustom(abi.encodePacked(bytes4(0xb6daee4e)))
-    {
+    function _finalize(ProviderData[] memory _providersData) internal firewallProtectedSig(0xb6daee4e) {
         typesCount = uint8(_providersData.length);
         uint256 limit = 0;
         for (uint8 i = 0; i < typesCount; ++i) {
@@ -187,7 +178,7 @@ abstract contract HoldersSum is ProviderModifiers, IDelayVaultProvider {
         ProviderData memory item
     )
         internal
-        firewallProtectedCustom(abi.encodePacked(bytes4(0x8fac0700)))
+        firewallProtectedSig(0x8fac0700)
         returns (uint256 limit)
     {
         require(address(item.provider) != address(0x0), "invalid address");

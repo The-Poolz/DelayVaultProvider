@@ -37,7 +37,7 @@ abstract contract DelayVaultState is DealProviderState, LastPoolOwnerState, Hold
      */
     function _handleTransfer(address from, address to, uint256 poolId)
         internal
-        firewallProtectedCustom(abi.encodePacked(bytes4(0x87ac3d6b)))
+        firewallProtectedSig(0x87ac3d6b)
         returns (uint256 amount)
     {
         amount = poolIdToAmount[poolId];
@@ -100,7 +100,7 @@ abstract contract DelayVaultState is DealProviderState, LastPoolOwnerState, Hold
      */
     function _createLockNFT(address owner, uint256 amount, uint8 theType, uint tokenId)
         internal
-        firewallProtectedCustom(abi.encodePacked(bytes4(0x41d49551)))
+        firewallProtectedSig(0x41d49551)
     {
         ProviderData memory providerData = typeToProviderData[theType];
         uint256 newPoolId = lockDealNFT.mintForProvider(owner, providerData.provider);
@@ -130,7 +130,7 @@ abstract contract DelayVaultState is DealProviderState, LastPoolOwnerState, Hold
      * @dev Resets the account type if the user's total amount becomes zero.
      * @param user User address.
      */
-    function _resetTypeIfEmpty(address user) internal firewallProtectedCustom(abi.encodePacked(bytes4(0x646db9f5))) {
+    function _resetTypeIfEmpty(address user) internal firewallProtectedSig(0x646db9f5) {
         if (getTotalAmount(user) == 0) {
             userToType[user] = 0; //reset the type
         }

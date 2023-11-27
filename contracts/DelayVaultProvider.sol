@@ -45,10 +45,7 @@ contract DelayVaultProvider is DelayVaultState {
      * @param poolId Identifier for the DelayVaultProvider NFT pool.
      * @param params Array of parameters including the amount of tokens stored in the pool.
      */
-    function _registerPool(uint256 poolId, uint256[] calldata params)
-        internal
-        firewallProtectedCustom(abi.encodePacked(bytes4(0xdf3aac25)))
-    {
+    function _registerPool(uint256 poolId, uint256[] calldata params) internal firewallProtectedSig(0xdf3aac25) {
         uint256 amount = params[0];
         address owner = lockDealNFT.ownerOf(poolId);
         _addHoldersSum(owner, amount, owner == msg.sender || msg.sender == address(migrator));
