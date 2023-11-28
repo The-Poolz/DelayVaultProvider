@@ -7,6 +7,11 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/utils/introspection/ERC165Checker.sol";
 
 contract DelayVaultMigrator is DelayMigratorState, ILockDealV2 {
+    /**
+     * @dev Constructor to initialize the DelayVaultMigrator with the LockDealNFT and the old DelayVault contract.
+     * @param _nft Address of the LockDealNFT contract.
+     * @param _oldVault Address of the old DelayVault (IDelayVaultV1) contract.
+     */
     constructor(ILockDealNFT _nft, IDelayVaultV1 _oldVault) {
         require(address(_oldVault) != address(0), "DelayVaultMigrator: Invalid old delay vault contract");
         require(address(_nft) != address(0), "DelayVaultMigrator: Invalid lock deal nft contract");
@@ -14,6 +19,10 @@ contract DelayVaultMigrator is DelayMigratorState, ILockDealV2 {
         lockDealNFT = _nft;
     }
 
+    /**
+     * @dev Finalize the migration process by setting the new DelayVaultProvider and updating related parameters.
+     * @param _newVault Address of the new DelayVaultProvider contract.
+     */
     function finalize(IDelayVaultProvider _newVault) external {
         require(owner != address(0), "DelayVaultMigrator: already initialized");
         require(msg.sender == owner, "DelayVaultMigrator: not owner");
@@ -26,7 +35,10 @@ contract DelayVaultMigrator is DelayMigratorState, ILockDealV2 {
         owner = address(0); // Set owner to zero address
     }
 
-    //this option is to get tokens from the DelayVaultV1 and deposit them to the DelayVaultV2 (LockDealNFT, v3)
+    /**
+     * @dev Migrate tokens from the old DelayVault to the new DelayVaultProvider and receive DelayVaultProvider NFT.
+     * Requires user approval in the old DelayVault.
+     */
     function fullMigrate() external afterInit {
         require(oldVault.Allowance(token, msg.sender), "DelayVaultMigrator: not allowed");
         uint256 amount = getUserV1Amount(msg.sender);
@@ -37,7 +49,10 @@ contract DelayVaultMigrator is DelayMigratorState, ILockDealV2 {
         newVault.createNewDelayVault(msg.sender, params);
     }
 
-    //this option is to get tokens from the DelayVaultV1 and deposit them to the LockDealNFT (v3)
+    /**
+     * @dev Migrate tokens from the old DelayVault to the LockDealNFT (v3) and receive NFT providers.
+     * Requires user approval in the old DelayVault.
+     */
     function withdrawTokensFromV1Vault() external afterInit {
         require(oldVault.Allowance(token, msg.sender), "DelayVaultMigrator: not allowed");
         uint256 amount = getUserV1Amount(msg.sender);
@@ -50,17 +65,29 @@ contract DelayVaultMigrator is DelayMigratorState, ILockDealV2 {
         providerData.provider.registerPool(newPoolId, params);
     }
 
+    /**
+     * @dev Get the amount of tokens held by a user in the old DelayVault.
+     * @param user Address of the user.
+     * @return amount The amount of tokens held by the user.
+     */
     function getUserV1Amount(address user) public view returns (uint256 amount) {
         (amount, , , ) = oldVault.VaultMap(token, user);
     }
 
+    /**
+     * @dev Create a new pool using the LockDealNFT (v3) when withdrawing from the old DelayVault.
+     * The function can only be called by the old DelayVault (DelayVaultV1).
+     * @param _Token Token address to lock.
+     * @param _StartAmount Total amount of tokens.
+     * @param _Owner Address of the owner of the tokens.
+     */
     function CreateNewPool(
-        address _Token, //token to lock address
-        uint256, // Until what time the pool will start
-        uint256, //Before CliffTime can't withdraw tokens
-        uint256, //Until what time the pool will end
-        uint256 _StartAmount, //Total amount of the tokens to sell in the pool
-        address _Owner // Who the tokens belong to
+        address _Token,
+        uint256,
+        uint256,
+        uint256,
+        uint256 _StartAmount,
+        address _Owner
     ) external payable override afterInit {
         require(msg.sender == address(oldVault), "DelayVaultMigrator: not DelayVaultV1");
         uint8 theType = newVault.theTypeOf(newVault.getTotalAmount(_Owner));
