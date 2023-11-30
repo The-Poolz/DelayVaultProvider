@@ -4,12 +4,13 @@ pragma solidity ^0.8.0;
 import "./LockDealNFT/contracts/SimpleProviders/Provider/ProviderModifiers.sol";
 import "./interfaces/IDelayVaultProvider.sol";
 import "./interfaces/IMigrator.sol";
+import "@ironblocks/firewall-consumer/contracts/FirewallConsumer.sol";
 
 /**
  * @title HoldersSum
  * @dev Contract handling user balances, account types, and provider data for DelayVaultProvider.
  */
-abstract contract HoldersSum is ProviderModifiers, IDelayVaultProvider {
+abstract contract HoldersSum is ProviderModifiers, IDelayVaultProvider, FirewallConsumer {
     //this is only the delta
     //the amount is the amount of the pool
     // params[0] = startTimeDelta (empty for DealProvider)

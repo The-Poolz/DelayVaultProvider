@@ -39,7 +39,7 @@ contract DelayVaultMigrator is DelayMigratorState, FirewallConsumer, ILockDealV2
      * @dev Migrate tokens from the old DelayVault to the new DelayVaultProvider and receive DelayVaultProvider NFT.
      * Requires user approval in the old DelayVault.
      */
-    function fullMigrate() external firwallProtected afterInit {
+    function fullMigrate() external firewallProtected afterInit {
         require(oldVault.Allowance(token, msg.sender), "DelayVaultMigrator: not allowed");
         uint256 amount = getUserV1Amount(msg.sender);
         oldVault.redeemTokensFromVault(token, msg.sender, amount);
