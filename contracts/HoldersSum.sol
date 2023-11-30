@@ -34,6 +34,7 @@ abstract contract HoldersSum is ProviderModifiers, IDelayVaultProvider {
 
     /**
      * @dev Determines the tier type based on the amount of tokens held.
+     * @dev Better to use binary search if the number of types is more than ~6-7
      * @param amount Amount of ERC20 tokens.
      * @return theType The deterfmined tier type.
      */

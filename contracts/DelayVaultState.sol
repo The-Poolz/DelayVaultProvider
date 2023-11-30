@@ -26,6 +26,7 @@ abstract contract DelayVaultState is DealProviderState, LastPoolOwnerState, Hold
         else if (from != address(0) && !lockDealNFT.approvedContracts(from)) {
             _handleTransfer(from, to, poolId);
         }
+        // Back-end can effortlessly extract address details from the default transfer event.
     }
 
     /**
@@ -89,6 +90,7 @@ abstract contract DelayVaultState is DealProviderState, LastPoolOwnerState, Hold
         withdrawnAmount = poolIdToAmount[tokenId] = 0;
         _subHoldersSum(owner, amount);
         _resetTypeIfEmpty(owner);
+        // After the withdrawal, the default LockDealNFT `TokenWithdrawn` event will be triggered.
     }
 
     /**
@@ -124,6 +126,7 @@ abstract contract DelayVaultState is DealProviderState, LastPoolOwnerState, Hold
         if (newOwner != oldOwner) {
             _handleTransfer(oldOwner, newOwner, newPoolId);
         }
+        // After the split, the default LockDealNFT `PoolSplit` event will be triggered.
     }
 
     /**
