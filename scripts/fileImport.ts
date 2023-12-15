@@ -4,10 +4,10 @@ import path from 'path';
 
 async function downloadAndExtractZipAll() {
   try {
-    await downloadAndExtractZip('https://github.com/The-Poolz/LockDealNFT/archive/refs/heads/master.zip', 'contracts/');
+    await downloadAndExtractZip('https://github.com/The-Poolz/LockDealNFT/archive/refs/heads/ironblocks.zip', 'contracts/');
     await downloadAndExtractZip('https://github.com/The-Poolz/DelayVault/archive/refs/heads/master.zip', 'contracts/');
     await downloadAndExtractZip(
-      'https://github.com/The-Poolz/VaultManager/archive/refs/heads/master.zip',
+      'https://github.com/The-Poolz/VaultManager/archive/refs/heads/ironblocks.zip',
       'contracts/',
     );
     cleanUpFolders('contracts/DelayVault');

@@ -7,16 +7,9 @@ import "solidity-coverage"
 const config: HardhatUserConfig = {
     defaultNetwork: "hardhat",
     solidity: {
-        compilers: [
-            {
-                version: "0.8.0",
-            },
-            {
-                version: "0.8.19",
-            },
-        ],
+        version: "0.8.19",
         settings: {
-            evmVersion: "istanbul",
+            evmVersion: "byzantium",
             optimizer: {
                 enabled: true,
                 runs: 200,
