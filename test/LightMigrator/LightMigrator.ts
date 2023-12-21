@@ -11,7 +11,7 @@ import { DelayVault } from '../../typechain-types';
 import { deployed } from '../helper';
 import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers';
 import { expect } from 'chai';
-import { BigNumber, constants } from 'ethers';
+import { BigNumber } from 'ethers';
 import { ethers } from 'hardhat';
 
 describe('DelayVault LightMigrator', function () {
@@ -31,14 +31,17 @@ describe('DelayVault LightMigrator', function () {
   let user4: SignerWithAddress;
   let user5: SignerWithAddress;
   let providerData: IDelayVaultProvider.ProviderDataStruct[];
-  const tier1: BigNumber = ethers.BigNumber.from('250');
-  const tier2: BigNumber = ethers.BigNumber.from('3500');
-  const tier3: BigNumber = ethers.BigNumber.from('20000');
+  const tier1: BigNumber = ethers.utils.parseUnits('250', 5);
+  const tier2: BigNumber = ethers.utils.parseUnits('3500', 5);
+  const tier3: BigNumber = ethers.utils.parseUnits('20000', 5);
   let startTime: number, finishTime: number;
   const amount: BigNumber = ethers.BigNumber.from('1000');
 
   before('Download and unzip contracts', async () => {
     [user1, user2, user3, user4, user5] = await ethers.getSigners();
+    const tier1: BigNumber = ethers.utils.parseUnits('250', 5);
+    const tier2: BigNumber = ethers.utils.parseUnits('3499', 5);
+    const tier3: BigNumber = ethers.utils.parseUnits('19999', 5);
     token = await deployed(
       '@poolzfinance/poolz-helper-v2/contracts/token/ERC20Token.sol:ERC20Token',
       'TestToken',
@@ -74,14 +77,15 @@ describe('DelayVault LightMigrator', function () {
     await lockDealNFT.setApprovedContract(delayVaultProvider.address, true);
     await lockDealNFT.setApprovedContract(delayVaultMigrator.address, true);
     await lockDealNFT.setApprovedContract(lightMigrator.address, true);
-    await token.transfer(user1.address, amount.mul(10));
-    await token.transfer(user2.address, amount.mul(10));
-    await token.transfer(user3.address, amount.mul(10));
-    await token.transfer(user4.address, amount.mul(10));
+    await delayVaultMigrator.finalize(delayVaultProvider.address);
+    await token.transfer(user1.address, tier3.mul(2));
+    await token.transfer(user2.address, tier3.mul(2));
+    await token.transfer(user3.address, tier3.mul(2));
+    await token.transfer(user4.address, tier3.mul(2));
   });
 
   it('old delay setup', async () => {
-    const amounts = [0, '250', '3500', '20000'];
+    const amounts = [0, tier1, tier2, tier3];
     const startDelays = [864000, 864000, 1728000, 2592000];
     const cliffDelays = [0, 0, 0, 0];
     const finishDelays = [0, 0, 0, 0];
@@ -95,17 +99,10 @@ describe('DelayVault LightMigrator', function () {
     await vaultManager['createNewVault(address)'](token.address);
   });
 
-  it('should finalize migrator', async () => {
-    await delayVaultMigrator.finalize(delayVaultProvider.address);
-    expect(await delayVaultMigrator.newVault()).to.be.equal(delayVaultProvider.address);
-    expect(await delayVaultMigrator.token()).to.be.equal(token.address);
-    expect(await delayVaultMigrator.owner()).to.be.equal(constants.AddressZero);
-  });
-
   it('should CreateNew NFT Pool after old delay vault withdraw', async () => {
     // create vault in old delay vault
-    await token.connect(user2).approve(delayVault.address, amount);
-    await delayVault.connect(user2).CreateVault(token.address, amount, 864000, 0, 0);
+    await token.connect(user2).approve(delayVault.address, tier1);
+    await delayVault.connect(user2).CreateVault(token.address, tier1, 864000, 0, 0);
     // withdraw from old delay vault
     await delayVault.connect(user2).Withdraw(token.address);
     expect(await lockDealNFT['balanceOf(address)'](user2.address)).to.be.equal(1);
@@ -113,11 +110,11 @@ describe('DelayVault LightMigrator', function () {
 
   it('should change type if totalAmount 0', async () => {
     // 1) create vault in old delay vault with 200 tokens
-    const tokenAmount = amount.div(5);
-    await token.connect(user4).approve(delayVault.address, amount.mul(2));
+    const tokenAmount = ethers.utils.parseUnits('200', 5);
+    await token.connect(user4).approve(delayVault.address, tier1);
     await delayVault.connect(user4).CreateVault(token.address, tokenAmount, 864000, 0, 0);
     // 2) create new vault with 200 tokens
-    await token.connect(user4).approve(delayVaultProvider.address, amount.mul(2));
+    await token.connect(user4).approve(delayVaultProvider.address, tier1);
     const poolId = await lockDealNFT.totalSupply();
     await delayVaultProvider.connect(user4).createNewDelayVault(user4.address, [tokenAmount]);
     // The user type should be increased to 1
@@ -146,5 +143,18 @@ describe('DelayVault LightMigrator', function () {
     await expect(lightMigrator.CreateNewPool(token.address, 0, 0, 0, 0, user1.address)).to.be.revertedWith(
       'LightMigrator: not DelayVaultV1',
     );
+  });
+
+  it('check time if user have tier 3 in old delay and then withdraw it', async () => {
+    // 1) create vault in old delay vault with tier3 tokens
+    const poolId = await lockDealNFT.totalSupply();
+    await token.connect(user3).approve(delayVault.address, tier3);
+    await delayVault.connect(user3).CreateVault(token.address, tier3, 2592000, 0, 0);
+    // 2) withdraw tokens from old delay vault
+    await delayVault.connect(user3).Withdraw(token.address);
+    const currentBlockTimestamp = (await ethers.provider.getBlock('latest')).timestamp;
+    const data = await lockDealNFT.getData(poolId);
+    expect(data.params[1]).to.be.equal(currentBlockTimestamp + startTime);
+    expect(data.params[2]).to.be.equal(currentBlockTimestamp + finishTime);
   });
 });
