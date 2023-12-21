@@ -1,4 +1,4 @@
-import { MockVaultManager } from '../../typechain-types';
+import { LightMigrator, MockVaultManager } from '../../typechain-types';
 import { DealProvider } from '../../typechain-types';
 import { LockDealNFT } from '../../typechain-types';
 import { LockDealProvider } from '../../typechain-types';
@@ -20,6 +20,7 @@ describe('Delay Migrator tests', function () {
   let mockVaultManager: MockVaultManager;
   let delayVault: DelayVault;
   let delayVaultMigrator: DelayVaultMigrator;
+  let lightMigrator: LightMigrator;
   let delayVaultProvider: DelayVaultProvider;
   let lockDealNFT: LockDealNFT;
   let user1: SignerWithAddress;
@@ -30,33 +31,7 @@ describe('Delay Migrator tests', function () {
   const tier2: BigNumber = ethers.BigNumber.from(3500);
   const tier3: BigNumber = ethers.BigNumber.from(20000);
   let startTime: BigNumber, finishTime: BigNumber;
-  const amount = ethers.utils.parseEther('100');
   const ONE_DAY = ethers.BigNumber.from(86400);
-  const userVaults: Array<{
-    Amount: BigNumber;
-    StartDelay: BigNumber;
-    CliffDelay: BigNumber;
-    FinishDelay: BigNumber;
-  }> = [
-    {
-      Amount: amount,
-      StartDelay: ONE_DAY,
-      CliffDelay: ethers.BigNumber.from(0),
-      FinishDelay: ethers.BigNumber.from(0),
-    },
-    {
-      Amount: amount.mul(2),
-      StartDelay: ethers.BigNumber.from(0),
-      CliffDelay: ethers.BigNumber.from(0),
-      FinishDelay: ONE_DAY,
-    },
-    {
-      Amount: amount.div(2),
-      StartDelay: ethers.BigNumber.from(0),
-      CliffDelay: ONE_DAY,
-      FinishDelay: ethers.BigNumber.from(0),
-    },
-  ];
 
   before(async () => {
     [user1, user2, user3] = await ethers.getSigners();
@@ -77,6 +52,12 @@ describe('Delay Migrator tests', function () {
     ];
     const DelayVaultProvider = await ethers.getContractFactory('DelayVaultProvider');
     delayVaultProvider = await DelayVaultProvider.deploy(token, delayVaultMigrator.address, providerData);
+    lightMigrator = await deployed(
+      'LightMigrator',
+      lockDealNFT.address,
+      delayVault.address,
+      delayVaultProvider.address,
+    );
     await lockDealNFT.setApprovedContract(lockProvider.address, true);
     await lockDealNFT.setApprovedContract(dealProvider.address, true);
     await lockDealNFT.setApprovedContract(timedProvider.address, true);
@@ -117,8 +98,8 @@ describe('Delay Migrator tests', function () {
   });
 
   it('should revert not DelayVaultV1 CreateNewPool call', async () => {
-    await expect(delayVaultMigrator.CreateNewPool(token, 0, 0, 0, 0, user1.address)).to.be.revertedWith(
-      'DelayVaultMigrator: not DelayVaultV1',
+    await expect(lightMigrator.CreateNewPool(token, 0, 0, 0, 0, user1.address)).to.be.revertedWith(
+      'LightMigrator: not DelayVaultV1',
     );
   });
 });

@@ -63,4 +63,11 @@ interface IDelayVaultProvider is IProvider {
      * @return params The parameters for withdrawing the specified amount.
      */
     function getWithdrawPoolParams(uint256 amount, uint8 theType) external view returns (uint256[] memory params);
+
+    /**
+     * @dev Retrieves the amount of assets owned by a specific user.
+     * @param user The address of the user.
+     * @return amount The amount of assets owned by the user.
+     */
+    function userToAmount(address user) external view returns (uint256 amount);
 }
