@@ -31,7 +31,6 @@ describe('DelayVault LightMigrator', function () {
   let user2: SignerWithAddress;
   let user3: SignerWithAddress;
   let user4: SignerWithAddress;
-  let user5: SignerWithAddress;
   let providerData: IDelayVaultProvider.ProviderDataStruct[];
   const tier1: BigNumber = utils.parseUnits('250', 18);
   const tier2: BigNumber = utils.parseUnits('3500', 18);
@@ -42,7 +41,7 @@ describe('DelayVault LightMigrator', function () {
   const tier3Timer = ONE_DAY * 30;
 
   before('Download and unzip contracts', async () => {
-    [user1, user2, user3, user4, user5] = await ethers.getSigners();
+    [user1, user2, user3, user4] = await ethers.getSigners();
     const tier1 = utils.parseUnits("3499", 18)
     const tier2 = utils.parseUnits("19999", 18)
     const tier3 = utils.parseUnits("20000", 18)
