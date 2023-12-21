@@ -15,7 +15,7 @@ import { BigNumber } from 'ethers';
 import { ethers } from 'hardhat';
 import { utils } from "ethers"
 
-describe('DelayVault LightMigrator', function () {
+describe('old DelayVault and LightMigrator integration', function () {
   let token: ERC20Token;
   let lockProvider: LockDealProvider;
   let dealProvider: DealProvider;
