@@ -28,7 +28,6 @@ describe('DelayVault Migrator', function () {
   let user2: SignerWithAddress;
   let user3: SignerWithAddress;
   let user4: SignerWithAddress;
-  let user5: SignerWithAddress;
   let providerData: IDelayVaultProvider.ProviderDataStruct[];
   const tier1: BigNumber = ethers.BigNumber.from('250');
   const tier2: BigNumber = ethers.BigNumber.from('3500');
@@ -37,7 +36,7 @@ describe('DelayVault Migrator', function () {
   const amount: BigNumber = ethers.BigNumber.from('1000');
 
   before('Download and unzip contracts', async () => {
-    [user1, user2, user3, user4, user5] = await ethers.getSigners();
+    [user1, user2, user3, user4] = await ethers.getSigners();
     token = await deployed(
       '@poolzfinance/poolz-helper-v2/contracts/token/ERC20Token.sol:ERC20Token',
       'TestToken',
