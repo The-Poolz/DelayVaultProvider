@@ -1,4 +1,3 @@
-import { lockDealNft } from '../../typechain-types/contracts';
 import { delayVault } from './setupTests';
 import { expect } from 'chai';
 import { ethers } from 'hardhat';

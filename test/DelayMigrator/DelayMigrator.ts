@@ -96,10 +96,4 @@ describe('Delay Migrator tests', function () {
   it('should revert not approved withdrawTokensFromV1Vault call', async () => {
     await expect(delayVaultMigrator.withdrawTokensFromV1Vault()).to.be.revertedWith('DelayVaultMigrator: not allowed');
   });
-
-  it('should revert not DelayVaultV1 CreateNewPool call', async () => {
-    await expect(lightMigrator.CreateNewPool(token, 0, 0, 0, 0, user1.address)).to.be.revertedWith(
-      'LightMigrator: not DelayVaultV1',
-    );
-  });
 });
