@@ -1,4 +1,4 @@
-import { LightMigrator, MockVaultManager } from '../../typechain-types';
+import { MockVaultManager } from '../../typechain-types';
 import { DealProvider } from '../../typechain-types';
 import { LockDealNFT } from '../../typechain-types';
 import { LockDealProvider } from '../../typechain-types';
@@ -20,12 +20,9 @@ describe('Delay Migrator tests', function () {
   let mockVaultManager: MockVaultManager;
   let delayVault: DelayVault;
   let delayVaultMigrator: DelayVaultMigrator;
-  let lightMigrator: LightMigrator;
   let delayVaultProvider: DelayVaultProvider;
   let lockDealNFT: LockDealNFT;
-  let user1: SignerWithAddress;
   let user2: SignerWithAddress;
-  let user3: SignerWithAddress;
   let providerData: IDelayVaultProvider.ProviderDataStruct[];
   const tier1: BigNumber = ethers.BigNumber.from(250);
   const tier2: BigNumber = ethers.BigNumber.from(3500);
@@ -34,7 +31,7 @@ describe('Delay Migrator tests', function () {
   const ONE_DAY = ethers.BigNumber.from(86400);
 
   before(async () => {
-    [user1, user2, user3] = await ethers.getSigners();
+    [, user2] = await ethers.getSigners();
     mockVaultManager = await deployed('MockVaultManager');
     lockDealNFT = await deployed('LockDealNFT', mockVaultManager.address, '');
     dealProvider = await deployed('DealProvider', lockDealNFT.address);
@@ -52,12 +49,6 @@ describe('Delay Migrator tests', function () {
     ];
     const DelayVaultProvider = await ethers.getContractFactory('DelayVaultProvider');
     delayVaultProvider = await DelayVaultProvider.deploy(token, delayVaultMigrator.address, providerData);
-    lightMigrator = await deployed(
-      'LightMigrator',
-      lockDealNFT.address,
-      delayVault.address,
-      delayVaultProvider.address,
-    );
     await lockDealNFT.setApprovedContract(lockProvider.address, true);
     await lockDealNFT.setApprovedContract(dealProvider.address, true);
     await lockDealNFT.setApprovedContract(timedProvider.address, true);
