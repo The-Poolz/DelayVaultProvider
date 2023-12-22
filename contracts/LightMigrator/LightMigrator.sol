@@ -29,17 +29,14 @@ contract LightMigrator is ILockDealV2 {
     address public token;
 
     /**
-     * @dev Constructor to initialize the DelayVaultMigrator with the LockDealNFT and the old DelayVault contract.
+     * @dev Constructor to initialize the LightMigrator with the LockDealNFT and the old DelayVault contract.
      * @param _nft Address of the LockDealNFT contract.
      * @param _oldVault Address of the old DelayVault (IDelayVaultV1) contract.
      */
     constructor(ILockDealNFT _nft, IDelayVaultV1 _oldVault, IDelayVaultProvider _newVault) {
-        require(address(_oldVault) != address(0), "DelayVaultMigrator: Invalid old delay vault contract");
-        require(address(_nft) != address(0), "DelayVaultMigrator: Invalid lock deal nft contract");
-        require(
-            ERC165Checker.supportsInterface(address(_newVault), type(IDelayVaultProvider).interfaceId),
-            "DelayVaultMigrator: Invalid new delay vault contract"
-        );
+        require(address(_oldVault) != address(0), "LightMigrator: Invalid old delay vault contract");
+        require(address(_nft) != address(0), "LightMigrator: Invalid lock deal nft contract");
+        require(address(_newVault) != address(0), "LightMigrator: Invalid new delay vault contract");
         newVault = _newVault;
         token = newVault.token();
         oldVault = _oldVault;
