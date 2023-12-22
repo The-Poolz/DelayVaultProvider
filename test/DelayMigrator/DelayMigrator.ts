@@ -22,44 +22,16 @@ describe('Delay Migrator tests', function () {
   let delayVaultMigrator: DelayVaultMigrator;
   let delayVaultProvider: DelayVaultProvider;
   let lockDealNFT: LockDealNFT;
-  let user1: SignerWithAddress;
   let user2: SignerWithAddress;
-  let user3: SignerWithAddress;
   let providerData: IDelayVaultProvider.ProviderDataStruct[];
   const tier1: BigNumber = ethers.BigNumber.from(250);
   const tier2: BigNumber = ethers.BigNumber.from(3500);
   const tier3: BigNumber = ethers.BigNumber.from(20000);
   let startTime: BigNumber, finishTime: BigNumber;
-  const amount = ethers.utils.parseEther('100');
   const ONE_DAY = ethers.BigNumber.from(86400);
-  const userVaults: Array<{
-    Amount: BigNumber;
-    StartDelay: BigNumber;
-    CliffDelay: BigNumber;
-    FinishDelay: BigNumber;
-  }> = [
-    {
-      Amount: amount,
-      StartDelay: ONE_DAY,
-      CliffDelay: ethers.BigNumber.from(0),
-      FinishDelay: ethers.BigNumber.from(0),
-    },
-    {
-      Amount: amount.mul(2),
-      StartDelay: ethers.BigNumber.from(0),
-      CliffDelay: ethers.BigNumber.from(0),
-      FinishDelay: ONE_DAY,
-    },
-    {
-      Amount: amount.div(2),
-      StartDelay: ethers.BigNumber.from(0),
-      CliffDelay: ONE_DAY,
-      FinishDelay: ethers.BigNumber.from(0),
-    },
-  ];
 
   before(async () => {
-    [user1, user2, user3] = await ethers.getSigners();
+    [, user2] = await ethers.getSigners();
     mockVaultManager = await deployed('MockVaultManager');
     lockDealNFT = await deployed('LockDealNFT', mockVaultManager.address, '');
     dealProvider = await deployed('DealProvider', lockDealNFT.address);
@@ -114,11 +86,5 @@ describe('Delay Migrator tests', function () {
 
   it('should revert not approved withdrawTokensFromV1Vault call', async () => {
     await expect(delayVaultMigrator.withdrawTokensFromV1Vault()).to.be.revertedWith('DelayVaultMigrator: not allowed');
-  });
-
-  it('should revert not DelayVaultV1 CreateNewPool call', async () => {
-    await expect(delayVaultMigrator.CreateNewPool(token, 0, 0, 0, 0, user1.address)).to.be.revertedWith(
-      'DelayVaultMigrator: not DelayVaultV1',
-    );
   });
 });

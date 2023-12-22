@@ -2,12 +2,12 @@
 pragma solidity ^0.8.0;
 
 import "./DelayMigratorState.sol";
-import "../interfaces/ILockDealV2.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/utils/introspection/ERC165Checker.sol";
 import "@ironblocks/firewall-consumer/contracts/FirewallConsumer.sol";
 
-contract DelayVaultMigrator is DelayMigratorState, FirewallConsumer, ILockDealV2 {
+
+contract DelayVaultMigrator is DelayMigratorState, FirewallConsumer {
     /**
      * @dev Constructor to initialize the DelayVaultMigrator with the LockDealNFT and the old DelayVault contract.
      * @param _nft Address of the LockDealNFT contract.
@@ -72,30 +72,5 @@ contract DelayVaultMigrator is DelayMigratorState, FirewallConsumer, ILockDealV2
      */
     function getUserV1Amount(address user) public view returns (uint256 amount) {
         (amount, , , ) = oldVault.VaultMap(token, user);
-    }
-
-    /**
-     * @dev Create a new pool using the LockDealNFT (v3) when withdrawing from the old DelayVault.
-     * The function can only be called by the old DelayVault (DelayVaultV1).
-     * @param _Token Token address to lock.
-     * @param _StartAmount Total amount of tokens.
-     * @param _Owner Address of the owner of the tokens.
-     */
-    function CreateNewPool(
-        address _Token, 
-        uint256,
-        uint256,
-        uint256,
-        uint256 _StartAmount,
-        address _Owner
-    ) external firewallProtected payable override afterInit {
-        require(msg.sender == address(oldVault), "DelayVaultMigrator: not DelayVaultV1");
-        uint8 theType = newVault.theTypeOf(newVault.getTotalAmount(_Owner));
-        IDelayVaultProvider.ProviderData memory providerData = newVault.getTypeToProviderData(theType);
-        IERC20(token).transferFrom(msg.sender, address(this), _StartAmount);
-        IERC20(token).transfer(address(lockDealNFT), _StartAmount);
-        uint256 newPoolId = lockDealNFT.mintAndTransfer(_Owner, _Token, _StartAmount, providerData.provider);
-        uint256[] memory params = newVault.getWithdrawPoolParams(_StartAmount, theType);
-        providerData.provider.registerPool(newPoolId, params);
     }
 }
