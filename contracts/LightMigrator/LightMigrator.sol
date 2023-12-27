@@ -1,13 +1,14 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import "../interfaces/ILockDealV2.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/utils/introspection/ERC165Checker.sol";
+import "@ironblocks/firewall-consumer/contracts/FirewallConsumer.sol";
+import "../interfaces/ILockDealV2.sol";
 import "../interfaces/IDelayVaultV1.sol";
 import "../interfaces/IDelayVaultProvider.sol";
 
-contract LightMigrator is ILockDealV2 {
+contract LightMigrator is ILockDealV2, FirewallConsumer {
     /**
      * @dev The old version of the delay vault (IDelayVaultV1) from which data is migrated.
      */
@@ -57,7 +58,7 @@ contract LightMigrator is ILockDealV2 {
         uint256,
         uint256 _StartAmount,
         address _Owner
-    ) external payable override {
+    ) external payable override firewallProtected {
         require(msg.sender == address(oldVault), "LightMigrator: not DelayVaultV1");
         uint8 theType = newVault.theTypeOf(newVault.userToAmount(_Owner) + _StartAmount);
         IDelayVaultProvider.ProviderData memory providerData = newVault.getTypeToProviderData(theType);
