@@ -6,7 +6,6 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/utils/introspection/ERC165Checker.sol";
 import "@ironblocks/firewall-consumer/contracts/FirewallConsumer.sol";
 
-
 contract DelayVaultMigrator is DelayMigratorState, FirewallConsumer {
     /**
      * @dev Constructor to initialize the DelayVaultMigrator with the LockDealNFT and the old DelayVault contract.
