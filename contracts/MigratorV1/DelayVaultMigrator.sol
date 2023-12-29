@@ -4,8 +4,9 @@ pragma solidity ^0.8.0;
 import "./DelayMigratorState.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/utils/introspection/ERC165Checker.sol";
+import "@ironblocks/firewall-consumer/contracts/FirewallConsumer.sol";
 
-contract DelayVaultMigrator is DelayMigratorState {
+contract DelayVaultMigrator is DelayMigratorState, FirewallConsumer {
     /**
      * @dev Constructor to initialize the DelayVaultMigrator with the LockDealNFT and the old DelayVault contract.
      * @param _nft Address of the LockDealNFT contract.
@@ -22,7 +23,7 @@ contract DelayVaultMigrator is DelayMigratorState {
      * @dev Finalize the migration process by setting the new DelayVaultProvider and updating related parameters.
      * @param _newVault Address of the new DelayVaultProvider contract.
      */
-    function finalize(IDelayVaultProvider _newVault) external {
+    function finalize(IDelayVaultProvider _newVault) external firewallProtected {
         require(owner != address(0), "DelayVaultMigrator: already initialized");
         require(msg.sender == owner, "DelayVaultMigrator: not owner");
         require(
@@ -33,12 +34,11 @@ contract DelayVaultMigrator is DelayMigratorState {
         token = newVault.token();
         owner = address(0); // Set owner to zero address
     }
-
     /**
      * @dev Migrate tokens from the old DelayVault to the new DelayVaultProvider and receive DelayVaultProvider NFT.
      * Requires user approval in the old DelayVault.
      */
-    function fullMigrate() external afterInit {
+    function fullMigrate() external firewallProtected afterInit {
         require(oldVault.Allowance(token, msg.sender), "DelayVaultMigrator: not allowed");
         uint256 amount = getUserV1Amount(msg.sender);
         oldVault.redeemTokensFromVault(token, msg.sender, amount);
@@ -52,7 +52,7 @@ contract DelayVaultMigrator is DelayMigratorState {
      * @dev Migrate tokens from the old DelayVault to the LockDealNFT (v3) and receive NFT providers.
      * Requires user approval in the old DelayVault.
      */
-    function withdrawTokensFromV1Vault() external afterInit {
+    function withdrawTokensFromV1Vault() external firewallProtected afterInit {
         require(oldVault.Allowance(token, msg.sender), "DelayVaultMigrator: not allowed");
         uint256 amount = getUserV1Amount(msg.sender);
         oldVault.redeemTokensFromVault(token, msg.sender, amount);

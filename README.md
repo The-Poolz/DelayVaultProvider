@@ -1,7 +1,7 @@
 # DelayVaultProvider
 
-[![Build and Test](https://github.com/The-Poolz/DelayVaultProvider/actions/workflows/node.js.yml/badge.svg)](https://github.com/The-Poolz/DelayVaultProvider/actions/workflows/node.js.yml)
-[![codecov](https://codecov.io/gh/The-Poolz/DelayVaultProvider/branch/master/graph/badge.svg)](https://codecov.io/gh/The-Poolz/DelayVaultProvider)
+[![Build and Test](https://github.com/The-Poolz/LockDealNFT.DelayVaultProvider/actions/workflows/node.js.yml/badge.svg)](https://github.com/The-Poolz/LockDealNFT.DelayVaultProvider/actions/workflows/node.js.yml)
+[![codecov](https://codecov.io/gh/The-Poolz/LockDealNFT.DelayVaultProvider/branch/master/graph/badge.svg)](https://codecov.io/gh/The-Poolz/LockDealNFT.DelayVaultProvider)
 [![CodeFactor](https://www.codefactor.io/repository/github/the-poolz/LockDealNFT.DelayVaultProvider/badge)](https://www.codefactor.io/repository/github/the-poolz/LockDealNFT.DelayVaultProvider)
 
 A smart contract that locks **ERC20** tokens with a set delay. Upon withdrawal request, the tokens remain locked for the specified delay duration. Every lock is paired with an **NFT**, representing ownership of the locked amount.
