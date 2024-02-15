@@ -34,6 +34,8 @@ describe('DelayVault LightMigrator', function () {
   const tier1: BigNumber = ethers.utils.parseUnits('250', 5);
   const tier2: BigNumber = ethers.utils.parseUnits('3500', 5);
   const tier3: BigNumber = ethers.utils.parseUnits('20000', 5);
+  const name = 'LightMigrator';
+  const version = '1.0.0';
   let startTime: number, finishTime: number;
   const amount: BigNumber = ethers.BigNumber.from('1000');
 
@@ -69,6 +71,8 @@ describe('DelayVault LightMigrator', function () {
       lockDealNFT.address,
       delayVault.address,
       delayVaultProvider.address,
+      name,
+      version,
     );
     await lockDealNFT.setApprovedContract(lockProvider.address, true);
     await lockDealNFT.setApprovedContract(dealProvider.address, true);
@@ -82,6 +86,14 @@ describe('DelayVault LightMigrator', function () {
     await token.transfer(user2.address, tier3.mul(2));
     await token.transfer(user3.address, tier3.mul(2));
     await token.transfer(user4.address, tier3.mul(2));
+  });
+
+  it("should return name", async () => {
+    expect(await lightMigrator.name()).to.be.equal(name);
+  })
+
+  it("should return version", async () => {
+    expect(await lightMigrator.version()).to.be.equal(version);
   });
 
   it('old delay setup', async () => {
