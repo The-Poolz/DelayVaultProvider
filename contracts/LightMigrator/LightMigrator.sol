@@ -38,10 +38,8 @@ contract LightMigrator is ILockDealV2, FirewallConsumer, Nameable {
     constructor(
         ILockDealNFT _nft,
         IDelayVaultV1 _oldVault,
-        IDelayVaultProvider _newVault,
-        string memory _name,
-        string memory _version
-    ) Nameable(_name, _version) {
+        IDelayVaultProvider _newVault
+    ) Nameable("LightMigrator", "0.9.6") {
         require(
             address(_oldVault) != address(0),
             "LightMigrator: Invalid old delay vault contract"

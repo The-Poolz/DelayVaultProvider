@@ -35,7 +35,7 @@ describe('DelayVault LightMigrator', function () {
   const tier2: BigNumber = ethers.utils.parseUnits('3500', 5);
   const tier3: BigNumber = ethers.utils.parseUnits('20000', 5);
   const name = 'LightMigrator';
-  const version = '1.0.0';
+  const version = '0.9.6';
   let startTime: number, finishTime: number;
   const amount: BigNumber = ethers.BigNumber.from('1000');
 
@@ -70,9 +70,7 @@ describe('DelayVault LightMigrator', function () {
       'LightMigrator',
       lockDealNFT.address,
       delayVault.address,
-      delayVaultProvider.address,
-      name,
-      version,
+      delayVaultProvider.address
     );
     await lockDealNFT.setApprovedContract(lockProvider.address, true);
     await lockDealNFT.setApprovedContract(dealProvider.address, true);
