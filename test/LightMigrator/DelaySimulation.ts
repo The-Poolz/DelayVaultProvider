@@ -39,6 +39,8 @@ describe('old DelayVault and LightMigrator integration', function () {
   const tier1Timer = ONE_DAY * 10;
   const tier2Timer = ONE_DAY * 20;
   const tier3Timer = ONE_DAY * 30;
+  const name = 'LightMigrator';
+  const version = '0.9.6';
 
   before('Download and unzip contracts', async () => {
     [user1, user2, user3, user4] = await ethers.getSigners();
@@ -69,7 +71,7 @@ describe('old DelayVault and LightMigrator integration', function () {
       'LightMigrator',
       lockDealNFT.address,
       delayVault.address,
-      delayVaultProvider.address,
+      delayVaultProvider.address
     );
     await lockDealNFT.setApprovedContract(lockProvider.address, true);
     await lockDealNFT.setApprovedContract(dealProvider.address, true);

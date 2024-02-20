@@ -4,11 +4,12 @@ pragma solidity ^0.8.0;
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/utils/introspection/ERC165Checker.sol";
 import "@ironblocks/firewall-consumer/contracts/FirewallConsumer.sol";
+import "@poolzfinance/poolz-helper-v2/contracts/Nameable.sol";
 import "../interfaces/ILockDealV2.sol";
 import "../interfaces/IDelayVaultV1.sol";
 import "../interfaces/IDelayVaultProvider.sol";
 
-contract LightMigrator is ILockDealV2, FirewallConsumer {
+contract LightMigrator is ILockDealV2, FirewallConsumer, Nameable {
     /**
      * @dev The old version of the delay vault (IDelayVaultV1) from which data is migrated.
      */
@@ -34,10 +35,23 @@ contract LightMigrator is ILockDealV2, FirewallConsumer {
      * @param _nft Address of the LockDealNFT contract.
      * @param _oldVault Address of the old DelayVault (IDelayVaultV1) contract.
      */
-    constructor(ILockDealNFT _nft, IDelayVaultV1 _oldVault, IDelayVaultProvider _newVault) {
-        require(address(_oldVault) != address(0), "LightMigrator: Invalid old delay vault contract");
-        require(address(_nft) != address(0), "LightMigrator: Invalid lock deal nft contract");
-        require(address(_newVault) != address(0), "LightMigrator: Invalid new delay vault contract");
+    constructor(
+        ILockDealNFT _nft,
+        IDelayVaultV1 _oldVault,
+        IDelayVaultProvider _newVault
+    ) Nameable("LightMigrator", "0.9.6") {
+        require(
+            address(_oldVault) != address(0),
+            "LightMigrator: Invalid old delay vault contract"
+        );
+        require(
+            address(_nft) != address(0),
+            "LightMigrator: Invalid lock deal nft contract"
+        );
+        require(
+            address(_newVault) != address(0),
+            "LightMigrator: Invalid new delay vault contract"
+        );
         newVault = _newVault;
         token = newVault.token();
         oldVault = _oldVault;
