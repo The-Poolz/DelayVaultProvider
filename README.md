@@ -6,6 +6,9 @@
 
 A smart contract that locks **ERC20** tokens with a set delay. Upon withdrawal request, the tokens remain locked for the specified delay duration. Every lock is paired with an **NFT**, representing ownership of the locked amount.
 
+### Audit report
+The audit report is available here: [Audit Report](https://docs.google.com/document/d/18wc_ubSvvdZHUFyQuKjGpwSGjDzZz8mp33QShtAxjpQ/edit?tab=t.0#heading=h.5uoc4mfz7mn4)
+
 ### Navigation
 
 - [Installation](#installation)
